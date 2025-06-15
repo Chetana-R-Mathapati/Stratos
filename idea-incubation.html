@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stratos: Vision to Venture</title>
+  <link rel="stylesheet" href="idea.css" />
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+  
+  <!-- Shared Firebase Configuration -->
+  <script src="js/firebase-config.js"></script>
+  
+  <script>
+    // Listen for real-time updates to ideas
+    FirebaseSync.listenToCollection('ideas', (data, changeType) => {
+      if (changeType === 'removed') return; // Handle removal if needed
+      updateUI(data);
+    });
+    
+    // Update UI with new data
+    function updateUI(data) {
+      const roadmapOutput = document.getElementById('roadmap-output');
+      if (!roadmapOutput) return;
+      
+      // Generate steps based on the data
+      const steps = generateRoadmapSteps(data.idea);
+      displayRoadmapSteps(steps);
+    }
+    
+    // Function to display roadmap steps
+    function displayRoadmapSteps(steps) {
+      const roadmapOutput = document.getElementById('roadmap-output');
+      roadmapOutput.innerHTML = '';
+      
+      steps.forEach((step, index) => {
+        const stepElement = document.createElement("div");
+        stepElement.className = "roadmap-step";
+        
+        stepElement.innerHTML = `
+          <div class="milestone-marker">${index + 1}</div>
+          <div class="content">
+            <div class="title">${step.title}</div>
+            <div class="description">${step.description}</div>
+            <div class="timeline">${step.timeline}</div>
+          </div>
+          <div class="milestone-indicator">${step.milestone}</div>
+          <div class="step-details">
+            <h4>${step.title}</h4>
+            <p>${step.description}</p>
+            <div class="next-actions">
+              <h4>Next Actions:</h4>
+              <ul>
+                ${step.nextActions.map(action => `<li>${action}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        `;
+        
+        roadmapOutput.appendChild(stepElement);
+        setTimeout(() => {
+          stepElement.classList.add('visible');
+        }, (index + 1) * 1000);
+      });
+    }
+  </script>
+  <style>
+    .roadmap-step {
+      display: flex;
+      align-items: flex-start;
+      margin: 1.5rem 0;
+      cursor: pointer;
+      animation: slideUp 1s ease forwards;
+      opacity: 0;
+      border-left: 4px solid transparent;
+      padding-left: 0.8rem;
+      transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .roadmap-step:hover {
+      border-color: #4CAF50;
+      background-color: white;
+    }
+
+    .roadmap-step .icon {
+      font-size: 1.8rem;
+      margin-right: 1rem;
+      color: #4CAF50;
+      user-select: none;
+    }
+
+    .roadmap-step .text {
+      flex: 1;
+      font-size: 1.1rem;
+      color: white;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+
+    /* Active step styling */
+    .roadmap-step.active {
+      border-color: #4CAF50;
+      background-color: #e6f4ea;
+    }
+
+    .roadmap-step.active .text {
+      color: #2a662a;
+      font-weight: 600;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .description {
+      margin-left: 2.6rem;
+      margin-top: 0.3rem;
+      font-size: 0.95rem;
+      color: #555;
+      font-style: italic;
+      display: none;
+    }
+
+    .roadmap-container {
+      position: relative;
+      padding: 40px;
+      background: #f8f9fa;
+      border-radius: 15px;
+      margin-top: 2rem;
+      overflow: visible;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .roadmap-steps {
+      position: relative;
+      padding: 20px 100px 20px 150px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Main vertical line */
+    .roadmap-steps::before {
+      content: '';
+      position: absolute;
+      left: 35px;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: #4CAF50;
+      opacity: 0.3;
+    }
+
+    .roadmap-step {
+      position: relative;
+      margin-left: 70px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      width: calc(100% - 70px);
+    }
+
+    /* Step description popup */
+    .step-details {
+      position: absolute;
+      left: calc(100% + 30px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 320px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .roadmap-step.active .step-details {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Arrow pointing to the step */
+    .step-details::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid white;
+    }
+
+    .next-actions {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .next-actions h4 {
+      color: #2c3e50;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .next-actions ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .next-actions li {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .next-actions li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #4CAF50;
+    }
+
+    @media (max-width: 1400px) {
+      .roadmap-container {
+        margin: 2rem 20px;
+      }
+      
+      .roadmap-steps {
+        padding: 20px 60px 20px 100px;
+      }
+      
+      .step-details {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .roadmap-steps {
+        padding: 20px 40px 20px 80px;
+      }
+      
+      .step-details {
+        width: 260px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .roadmap-step {
+        width: calc(100% - 50px);
+        margin-left: 50px;
+      }
+      
+      .step-details {
+        left: calc(100% + 20px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .roadmap-container {
+        padding: 20px;
+        margin: 2rem 10px;
+      }
+
+      .roadmap-steps {
+        padding: 20px 20px 20px 60px;
+      }
+
+      .step-details {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 320px;
+        max-height: 80vh;
+        overflow-y: auto;
+        margin: 0;
+        z-index: 1000;
+      }
+
+      .step-details::before {
+        display: none;
+      }
+
+      .roadmap-step.active::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+    }
+
+    /* Connecting line from circle to card */
+    .roadmap-step::before {
+      content: '';
+      position: absolute;
+      left: -35px;
+      top: 30px;
+      width: 35px;
+      height: 4px;
+      background: #4CAF50;
+      opacity: 0;
+      transition: opacity 0.3s ease 0.3s;
+    }
+
+    .roadmap-step.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .roadmap-step.visible::before {
+      opacity: 1;
+    }
+
+    .milestone-marker {
+      position: absolute;
+      left: -70px;
+      top: 15px;
+      width: 40px;
+      height: 40px;
+      background: #4CAF50;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.3);
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.5s ease 0.2s;
+    }
+
+    .roadmap-step.visible .milestone-marker {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .roadmap-step .content {
+      position: relative;
+    }
+
+    .roadmap-step .title {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s ease 0.3s;
+    }
+
+    .roadmap-step.visible .title {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .roadmap-step .description {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s ease 0.4s;
+    }
+
+    .roadmap-step.visible .description {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .roadmap-step .timeline {
+      color: #4CAF50;
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s ease 0.5s;
+    }
+
+    .roadmap-step.visible .timeline {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .milestone-indicator {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      background: #e8f5e9;
+      color: #4CAF50;
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.5s ease 0.6s;
+    }
+
+    .roadmap-step.visible .milestone-indicator {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Animation improvements */
+    .roadmap-step {
+      transition: transform 0.3s ease;
+    }
+
+    .roadmap-step:hover {
+      transform: translateX(5px);
+    }
+
+    .roadmap-step.active:hover {
+      transform: none;
+    }
+
+    /* Ensure proper z-indexing */
+    .roadmap-step {
+      position: relative;
+      z-index: 1;
+    }
+
+    .roadmap-step.active {
+      z-index: 100;
+    }
+
+    /* Ensure content is always visible */
+    .step-details h4 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .step-details p {
+      margin: 0 0 15px 0;
+      line-height: 1.5;
+      color: #666;
+    }
+
+    .roadmap-container h3 {
+      color: #2c3e50;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      background: linear-gradient(45deg, #4CAF50, #2c3e50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <h1>Stratos</h1>
+      <p class="tagline">Vision to Venture</p>
+      <a href="#submit" class="cta-button">Incubate Your Idea</a>
+    </div>
+  </header>
+
+  <section class="about">
+    <div class="container">
+      <h2>What is Idea Incubation?</h2>
+      <p>Stratos transforms bold ideas into viable ventures. Whether you're at the concept stage or prototype-ready, our incubation program provides mentorship, resources, and real-world testing.</p>
+    </div>
+  </section>
+
+  <section class="phases">
+    <div class="container">
+      <h2>Incubation Journey</h2>
+      <div class="phase-grid">
+        <div class="phase">
+          <h3>🌱 Vision</h3>
+          <p>Identify problems, generate breakthrough ideas, validate with early users.</p>
+        </div>
+        <div class="phase">
+          <h3>🚀 Build</h3>
+          <p>Develop MVPs, test hypotheses, iterate fast with feedback loops.</p>
+        </div>
+        <div class="phase">
+          <h3>🌍 Venture</h3>
+          <p>Launch in the market, attract partners, secure early traction.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="submit" id="submit">
+    <div class="container">
+      <h2>Submit Your Idea</h2>
+      <form id="idea-form">
+        <input type="text" id="name" placeholder="Your Name" required />
+        <input type="email" id="email" placeholder="Email Address" required />
+        <textarea id="idea" placeholder="Describe your idea..." rows="5" required></textarea>
+        <button type="submit">Generate Roadmap</button>
+      </form>
+
+      <div id="loading" style="display:none; margin-top: 1rem;">Loading...</div>
+
+      <div class="roadmap-container" style="display:none; margin-top: 1rem;">
+        <h3>Your Personalized Roadmap</h3>
+        <div class="roadmap-steps" id="roadmap-output"></div>
+      </div>
+     
+<div class="text-center" style="padding-top:10px; text-align: center;">
+  Do You want to Connect to Mentors?
+  <p></p>
+  <button class="btn btn-primary" onclick="window.location.href='mentor.html'">Connect</button>
+</div>
+
+    </div>
+    
+  </section>
+
+  <footer>
+    <p>© 2025 Stratos. All rights reserved.</p>
+  </footer>
+
+<script>
+    function analyzeIdea(idea) {
+      const ideaText = idea.toLowerCase();
+      const words = ideaText.split(/\s+/);
+      
+      return {
+        product: {
+          type: words.filter(w => w.match(/(product|service|platform|app|system|solution|website|tool)/)),
+          tech: words.filter(w => w.match(/(ai|ml|blockchain|iot|mobile|web|cloud|software|hardware)/)),
+          scope: words.filter(w => w.match(/(global|local|online|offline|digital|physical)/))
+        },
+        target: {
+          users: words.filter(w => w.match(/(user|customer|client|people|audience|student|patient|professional)/)),
+          sector: words.filter(w => w.match(/(business|consumer|enterprise|education|healthcare|retail|finance)/)),
+          scale: words.filter(w => w.match(/(small|medium|large|startup|corporate|individual)/))
+        },
+        features: {
+          core: words.filter(w => w.length > 4 && !w.match(/^(and|the|for|with|will|should)$/)).slice(0, 3),
+          technical: words.filter(w => w.match(/(automate|process|analyze|integrate|secure|scale|optimize)/)),
+          business: words.filter(w => w.match(/(monetize|profit|revenue|subscription|freemium|premium)/))
+        }
+      };
+    }
+
+    function generateRoadmapSteps(idea) {
+      const analysis = analyzeIdea(idea);
+      const steps = [];
+      let currentMonth = 1;
+
+      // Generate steps based on idea characteristics
+      const requiredSteps = determineRequiredSteps(analysis);
+      
+      requiredSteps.forEach(stepType => {
+        const step = generateStepDetails(stepType, analysis, currentMonth);
+        steps.push(step);
+        currentMonth++;
+      });
+
+      return steps;
+    }
+
+    function determineRequiredSteps(analysis) {
+      const steps = [];
+      
+      // Always start with idea validation
+      steps.push('validation');
+
+      // Add research if targeting specific sector/users
+      if (analysis.target.sector.length > 0 || analysis.target.users.length > 0) {
+        steps.push('market_research');
+      }
+
+      // Add regulatory compliance for regulated industries
+      if (analysis.target.sector.some(s => ['healthcare', 'finance', 'education'].includes(s))) {
+        steps.push('compliance');
+      }
+
+      // Add technical planning for technology products
+      if (analysis.product.tech.length > 0) {
+        steps.push('technical_planning');
+      }
+
+      // Add design phase for user-facing products
+      if (analysis.target.users.length > 0) {
+        steps.push('user_experience');
+      }
+
+      // Add architecture for complex systems
+      if (analysis.features.technical.length > 0) {
+        steps.push('architecture');
+      }
+
+      // Add prototype phase if mentioned
+      if (analysis.features.core.some(f => f.includes('prototype'))) {
+        steps.push('prototype');
+      }
+
+      // Add development phases based on complexity
+      const devPhases = calculateDevPhases(analysis);
+      for (let i = 0; i < devPhases; i++) {
+        steps.push(`development_${i + 1}`);
+      }
+
+      // Add security if mentioned or required
+      if (analysis.features.technical.some(f => f.includes('secure')) || 
+          analysis.target.sector.some(s => ['finance', 'healthcare'].includes(s))) {
+        steps.push('security');
+      }
+
+      // Add testing based on requirements
+      if (analysis.features.technical.length > 0) {
+        steps.push('technical_testing');
+      }
+      if (analysis.target.users.length > 0) {
+        steps.push('user_testing');
+      }
+
+      // Add scaling if mentioned
+      if (analysis.features.technical.some(f => f.includes('scale'))) {
+        steps.push('scaling');
+      }
+
+      // Add monetization if business features present
+      if (analysis.features.business.length > 0) {
+        steps.push('monetization');
+      }
+
+      // Add marketing if consumer-facing
+      if (analysis.target.sector.includes('consumer')) {
+        steps.push('marketing');
+      }
+
+      // Always end with launch preparation and launch
+      steps.push('launch_prep');
+      steps.push('launch');
+
+      return steps;
+    }
+
+    function calculateDevPhases(analysis) {
+      let phases = 1; // minimum one phase
+
+      // Increase phases based on technical complexity
+      if (analysis.product.tech.length > 0) phases++;
+      if (analysis.features.technical.length > 2) phases++;
+      if (analysis.features.business.length > 0) phases++;
+
+      return Math.min(4, phases); // cap at 4 phases
+    }
+
+    function generateStepDetails(stepType, analysis, month) {
+      const stepDetails = {
+        timeline: `Month ${month}`,
+        nextActions: []
+      };
+
+      switch(stepType) {
+        case 'validation':
+          stepDetails.title = 'Idea Validation';
+          stepDetails.description = `Validate ${analysis.product.type[0] || 'solution'} concept with ${analysis.target.users[0] || 'potential users'}`;
+          stepDetails.milestone = 'Validation';
+          stepDetails.nextActions = [
+            'Conduct problem interviews',
+            'Validate market need',
+            'Analyze competition',
+            'Define unique value proposition'
+          ];
+          break;
+
+        case 'market_research':
+          stepDetails.title = 'Market Analysis';
+          stepDetails.description = `Research ${analysis.target.sector[0] || 'market'} landscape and ${analysis.target.users[0] || 'user'} needs`;
+          stepDetails.milestone = 'Research';
+          stepDetails.nextActions = [
+            'Analyze market size',
+            'Study competitor offerings',
+            'Identify market gaps',
+            'Define target segments'
+          ];
+          break;
+
+        case 'compliance':
+          stepDetails.title = `${analysis.target.sector[0]} Compliance`;
+          stepDetails.description = `Ensure compliance with ${analysis.target.sector[0]} regulations and standards`;
+          stepDetails.milestone = 'Compliance';
+          stepDetails.nextActions = [
+            'Review regulatory requirements',
+            'Consult compliance experts',
+            'Document compliance needs',
+            'Plan compliance implementation'
+          ];
+          break;
+
+        case 'technical_planning':
+          const tech = analysis.product.tech[0] || 'technology';
+          stepDetails.title = `${tech} Planning`;
+          stepDetails.description = `Plan ${tech} implementation and architecture`;
+          stepDetails.milestone = 'Planning';
+          stepDetails.nextActions = [
+            'Choose technology stack',
+            'Define system architecture',
+            'Plan data management',
+            'Identify technical requirements'
+          ];
+          break;
+
+        case 'user_experience':
+          stepDetails.title = 'User Experience Design';
+          stepDetails.description = `Design user experience for ${analysis.target.users[0] || 'users'}`;
+          stepDetails.milestone = 'Design';
+          stepDetails.nextActions = [
+            'Create user personas',
+            'Design user journeys',
+            'Develop wireframes',
+            'Plan user interactions'
+          ];
+          break;
+
+        case 'architecture':
+          stepDetails.title = 'System Architecture';
+          stepDetails.description = `Design scalable architecture for ${analysis.features.technical.join(', ') || 'key features'}`;
+          stepDetails.milestone = 'Architecture';
+          stepDetails.nextActions = [
+            'Design system components',
+            'Plan integrations',
+            'Define data models',
+            'Document architecture'
+          ];
+          break;
+
+        case 'prototype':
+          stepDetails.title = 'Prototype Development';
+          stepDetails.description = `Build prototype focusing on ${analysis.features.core[0] || 'core functionality'}`;
+          stepDetails.milestone = 'Prototype';
+          stepDetails.nextActions = [
+            'Develop basic prototype',
+            'Test core concepts',
+            'Gather feedback',
+            'Iterate design'
+          ];
+          break;
+
+        case 'development_1':
+        case 'development_2':
+        case 'development_3':
+        case 'development_4':
+          const phase = stepType.split('_')[1];
+          const features = analysis.features.core.slice((phase - 1) * 2, phase * 2);
+          stepDetails.title = `Development Phase ${phase}`;
+          stepDetails.description = `Implement ${features.join(', ') || 'core features'}`;
+          stepDetails.milestone = 'Development';
+          stepDetails.nextActions = generateDevActions(analysis, parseInt(phase) - 1);
+          break;
+
+        case 'security':
+          stepDetails.title = 'Security Implementation';
+          stepDetails.description = `Implement security measures for ${analysis.target.sector[0] || 'system'} protection`;
+          stepDetails.milestone = 'Security';
+          stepDetails.nextActions = [
+            'Conduct security audit',
+            'Implement security measures',
+            'Test security features',
+            'Document security protocols'
+          ];
+          break;
+
+        case 'technical_testing':
+          stepDetails.title = 'Technical Testing';
+          stepDetails.description = `Test ${analysis.features.technical.join(', ') || 'technical features'}`;
+          stepDetails.milestone = 'Testing';
+          stepDetails.nextActions = [
+            'Perform unit testing',
+            'Conduct integration testing',
+            'Test performance',
+            'Fix technical issues'
+          ];
+          break;
+
+        case 'user_testing':
+          stepDetails.title = 'User Testing';
+          stepDetails.description = `Test with ${analysis.target.users[0] || 'target users'}`;
+          stepDetails.milestone = 'Testing';
+          stepDetails.nextActions = [
+            'Recruit test users',
+            'Conduct usability tests',
+            'Gather user feedback',
+            'Implement improvements'
+          ];
+          break;
+
+        case 'scaling':
+          stepDetails.title = 'Scaling Infrastructure';
+          stepDetails.description = `Prepare ${analysis.product.type[0] || 'solution'} for scale`;
+          stepDetails.milestone = 'Scaling';
+          stepDetails.nextActions = [
+            'Optimize performance',
+            'Scale infrastructure',
+            'Test scalability',
+            'Monitor systems'
+          ];
+          break;
+
+        case 'monetization':
+          stepDetails.title = 'Monetization Strategy';
+          stepDetails.description = `Implement ${analysis.features.business.join(', ') || 'business model'}`;
+          stepDetails.milestone = 'Business';
+          stepDetails.nextActions = [
+            'Define pricing model',
+            'Set up payment systems',
+            'Create revenue streams',
+            'Test business model'
+          ];
+          break;
+
+        case 'marketing':
+          stepDetails.title = 'Marketing Preparation';
+          stepDetails.description = `Prepare marketing for ${analysis.target.users[0] || 'target audience'}`;
+          stepDetails.milestone = 'Marketing';
+          stepDetails.nextActions = [
+            'Create marketing strategy',
+            'Develop marketing materials',
+            'Plan launch campaign',
+            'Set up analytics'
+          ];
+          break;
+
+        case 'launch_prep':
+          stepDetails.title = 'Launch Preparation';
+          stepDetails.description = `Prepare ${analysis.product.type[0] || 'solution'} for launch`;
+          stepDetails.milestone = 'Pre-launch';
+          stepDetails.nextActions = [
+            'Finalize all features',
+            'Prepare documentation',
+            'Set up support systems',
+            'Plan launch timeline'
+          ];
+          break;
+
+        case 'launch':
+          stepDetails.title = 'Launch';
+          stepDetails.description = `Launch ${analysis.product.type[0] || 'solution'} to ${analysis.target.users[0] || 'market'}`;
+          stepDetails.milestone = 'Launch';
+          stepDetails.nextActions = [
+            'Execute launch plan',
+            'Monitor performance',
+            'Gather feedback',
+            'Plan iterations'
+          ];
+          break;
+      }
+
+      return stepDetails;
+    }
+
+    function generateDevActions(analysis, phase) {
+      switch(phase) {
+        case 0:
+          return [
+            'Set up development environment',
+            'Implement core functionality',
+            'Create basic interface',
+            'Establish data structure'
+          ];
+        case 1:
+          return [
+            'Develop advanced features',
+            'Implement integrations',
+            'Enhance user interface',
+            'Optimize performance'
+          ];
+        case 2:
+          return [
+            'Scale infrastructure',
+            'Implement advanced security',
+            'Optimize for performance',
+            'Prepare for deployment'
+          ];
+        case 3:
+          return [
+            'Finalize all features',
+            'Polish user interface',
+            'Complete documentation',
+            'Prepare for testing'
+          ];
+        default:
+          return [
+            'Implement planned features',
+            'Test functionality',
+            'Fix issues',
+            'Document changes'
+          ];
+      }
+    }
+
+    document.querySelector("#idea-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const idea = document.getElementById("idea").value.trim();
+
+      if (!name || !email || !idea) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const loading = document.getElementById("loading");
+      const roadmapContainer = document.querySelector(".roadmap-container");
+
+      loading.style.display = "block";
+      roadmapContainer.style.display = "none";
+
+      // Generate dynamic steps based on idea
+      const steps = generateRoadmapSteps(idea);
+
+      setTimeout(() => {
+        loading.style.display = "none";
+        
+        roadmapContainer.innerHTML = `
+          <h3>Your Personalized Roadmap</h3>
+          <div class="roadmap-steps" id="roadmap-output"></div>
+        `;
+        
+        const roadmapOutput = document.getElementById("roadmap-output");
+        
+        steps.forEach((step, index) => {
+          const stepElement = document.createElement("div");
+          stepElement.className = "roadmap-step";
+          
+          stepElement.innerHTML = `
+            <div class="milestone-marker">${index + 1}</div>
+            <div class="content">
+              <div class="title">${step.title}</div>
+              <div class="description">${step.description}</div>
+              <div class="timeline">${step.timeline}</div>
+            </div>
+            <div class="milestone-indicator">${step.milestone}</div>
+            <div class="step-details">
+              <h4>${step.title}</h4>
+              <p>${step.description}</p>
+              <div class="next-actions">
+                <h4>Next Actions:</h4>
+                <ul>
+                  ${step.nextActions.map(action => `<li>${action}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+          `;
+          
+          // Add click event listener
+          stepElement.addEventListener('click', function(e) {
+            // Close any open descriptions
+            document.querySelectorAll('.roadmap-step').forEach(s => {
+              if (s !== this) s.classList.remove('active');
+            });
+            
+            // Toggle current description
+            this.classList.toggle('active');
+            
+            // Prevent description click from closing
+            e.stopPropagation();
+          });
+          
+          roadmapOutput.appendChild(stepElement);
+          
+          // Animate each step sequentially
+          setTimeout(() => {
+            stepElement.classList.add('visible');
+          }, (index + 1) * 1000);
+        });
+
+        // Close descriptions when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.roadmap-step')) {
+            document.querySelectorAll('.roadmap-step').forEach(step => {
+              step.classList.remove('active');
+            });
+          }
+        });
+
+        roadmapContainer.style.display = "block";
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "Stratos",
+  "short_name": "Stratos",
+  "description": "Vision to Venture - Your Startup Journey Begins Here",
+  "start_url": "./index.html",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./img/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./img/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+} 

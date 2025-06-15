@@ -1,0 +1,138 @@
+/* Custom styles for the website */
+
+/* Body and background */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+}
+
+/* Navbar */
+.nav1 {
+  margin-bottom: 30px;
+  background-color: #aecbbb;
+}
+
+
+
+.navbar-nav .nav-link {
+  color: white ;
+  font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+  color: black !important;
+}
+
+.sign-in-btn {
+  color: black;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sign-in-btn:hover {
+ 
+  background-color: #c6e4fa; /* Choose the color you want */
+  color: balck;
+}
+.sign-in-btn:hover {
+  background-color: #c6e4fa; /* Choose the color you want */
+  color: black; /* Optional: change the text color on hover */
+  transition: background-color 0.3s ease;
+}
+.sign-in {
+  background-color: #007bff !important; /* Or any color you prefer */
+  transition: background-color 0.3s ease;
+}
+/* Background container */
+.bg-container {
+  background-image: url('images/bg.jpg'); /* Use a background image */
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+  
+}
+
+/* Content Section */
+.container-fluid {
+  margin-top: 50px;
+}
+
+.video-column {
+  position: relative;
+}
+
+.video-column video {
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Success Stories Section */
+.success-stories {
+  background-color:transparent;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.success-stories h4 {
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  color: #3ad3e1;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-img {
+  border-radius: 50%;
+  width: 100%;
+  height: auto;
+  margin: 10px;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-title {
+  font-weight: bold;
+  color: #3a6d72;
+}
+
+.card-text {
+  color: #5f5f5f;
+}
+.card-img-container {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.card-img-top, .card-img-bottom {
+  width: 80%;
+  height: auto;
+  border-radius: 10px;
+}
+/* Define a new background color for the navbar when active */
+.navbar-active {
+  background-color: #007bff !important; /* Or any color you prefer */
+  transition: background-color 0.3s ease;
+}
+/* Hover effect on navbar links */
+.nav-link:hover {
+  background-color: #c6e4fa; /* Choose the color you want */
+  color: black; /* Optional: change the text color on hover */
+  transition: background-color 0.3s ease;
+}
+
+

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stratos Investor Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Filter section container */
+.filter-container {
+  background: linear-gradient(to right, #b6c1d6, #d2d9e8);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.filter-container label {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #2b3c53;
+}
+.#domain-filter {
+  padding: 0.6rem 1rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: #e0e7f1;
+  font-size: 1rem;
+  color: #1a1f2e;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: background 0.3s ease;
+}
+
+#domain-filter:hover {
+  background: #d1dbe8;
+}
+
+    body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background-color: #f4f2f7;
+  color: #1f1f2e;
+}
+
+header {
+  background: linear-gradient(to right, #395886, #2b4d6e);
+  color: #ffffff;
+  padding: 2rem;
+  text-align: center;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.mentors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.mentor-card {
+  background: #e6d5de;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mentor-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.mentor-card.bounce {
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.mentor-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.mentor-card h3 {
+  margin: 0.5rem 0 0.25rem;
+}
+
+.mentor-card a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #1f1f2e;
+  text-decoration: none;
+}
+
+.connect-btn {
+  margin-top: 1rem;
+  background: #4b5d79;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.connect-btn:hover {
+  background: #2e3e56;
+}
+
+.contact-form {
+  background: #ded1d9;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 3rem;
+}
+
+.contact-form h2 {
+  margin-top: 0;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #b49caa;
+  border-radius: 0.5rem;
+  background-color: #fdfcfd;
+}
+
+.contact-form button {
+  background: #4b5d79;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.contact-form button:hover {
+  background: #2e3e56;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 15, 20, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #f1e6f1;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+.modal-content p {
+  font-size: 1.1rem;
+}
+
+.close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #4b5d79;
+}
+
+#domain-filter {
+  padding: 0.6rem 1rem;
+  border-radius: 0.7rem;
+  border: 1px solid #8da3bb;
+  background: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+div[style*="Filter by Domain"] {
+  background: #cdd6e2;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+    body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background-color: #fef0f3; /* soft peach */
+  color: #12263a;
+}
+
+header {
+  background-color: #7bb4d3; /* blue retained */
+  color: #f2edf3;
+  padding: 2rem;
+  text-align: center;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.mentors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.mentor-card {
+  background: #ffe5ec; /* light pink */
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.mentor-card.bounce {
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.mentor-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.mentor-card h3 {
+  margin: 0.5rem 0 0.25rem;
+}
+
+.mentor-card a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #12263a;
+  text-decoration: none;
+}
+
+.connect-btn {
+  margin-top: 1rem;
+  background: #4ba3c3;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.connect-btn:hover {
+  background: #2c87aa;
+}
+
+.contact-form {
+  background: #ffe5ec; /* light pink */
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(85, 61, 159, 0.1);
+  margin-top: 3rem;
+}
+
+.contact-form h2 {
+  margin-top: 0;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #f4b6c2;
+  border-radius: 0.5rem;
+}
+
+.contact-form button {
+  background: #4ba3c3;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.contact-form button:hover {
+  background: #2c87aa;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fbe9ef; /* lighter pink/blue mix */
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+.modal-content p {
+  font-size: 1.1rem;
+}
+
+.close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #2c87aa;
+}
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Stratos Investor Hub</h1>
+    <p>Connect with India's top investors</p>
+  </header>
+<!-- Add this inside <body>, just below the <header> -->
+<div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; background: #d1eaf4; padding: 1rem 1.5rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+  <span style="font-weight: 600; font-size: 1.1rem; display: flex; align-items: center;">
+    🔍 Filter by Domain:
+  </span>
+  <select id="domain-filter" style="padding: 0.6rem 1rem; border-radius: 0.7rem; border: 1px solid #aad4e3; background: white; font-size: 1rem; cursor: pointer;">
+    <option value="All">All Domains</option>
+    <option value="Finance">💰 Finance</option>
+    <option value="Tech">💻 Tech</option>
+    <option value="Healthcare">🩺 Healthcare</option>
+    <option value="Wellness">🌿 Wellness</option>
+  </select>
+</div>
+
+  <div id="investor-list" class="mentors"></div>
+</div>
+
+  <main class="container">
+    <section>
+      <h2>Meet Our Investors</h2>
+      <div class="mentors" id="investor-list"></div>
+    </section>
+
+    <section class="contact-form">
+      <h2>Get in Touch</h2>
+      <form onsubmit="alert('Message sent!'); return false;">
+        <label for="message">Message</label>
+        <textarea id="message" rows="5" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-modal" class="close">&times;</span>
+      <p id="modal-message"></p>
+    </div>
+  </div>
+ <script>
+  const investors = [
+    {
+      id: 1,
+      name: "Nandan Nilekani",
+      domain: "Tech",
+      sector: "Tech, FinTech",
+      image: "https://th.bing.com/th/id/OIP.yVos6niUDviWeFBzCtsNaAHaEo?w=257&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+      bio: "Co-founder of Infosys, Nilekani has backed several Indian fintech and digital ID ventures.",
+    },
+    {
+      id: 2,
+      name: "Sanjiv Bajaj",
+      domain: "Finance",
+      sector: "Finance, Insurance",
+      image: "https://th.bing.com/th/id/OIP._k2ocN7WeHBPGmdG4beZ2QHaEK?w=297&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+      bio: "Managing Director of Bajaj Finserv and known for investing in finance and insurance innovation.",
+    },
+    {
+      id: 3,
+      name: "Kunal Bahl",
+      domain: "Tech",
+      sector: "E-commerce",
+      image: "https://th.bing.com/th/id/OIP.3QaR52N_mf2WPKbBcDzrpQAAAA?w=115&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+      bio: "Co-founder of Snapdeal, he actively invests in early-stage Indian startups.",
+    },
+    {
+      id: 4,
+      name: "Peyush Bansal",
+      domain: "Tech",
+      sector: "Consumer Tech",
+      image: "https://ik.imagekit.io/j83rchiauw/A_List_Star/Peyush-Bansal-biography.jpg",
+      bio: "Founder of Lenskart and a popular Shark Tank India investor supporting D2C brands.",
+    },
+    {
+      id: 5,
+      name: "Anupam Mittal",
+      domain: "Tech",
+      sector: "Tech, Matrimony, Consumer",
+      image: "https://th.bing.com/th/id/OIP.6AQFGYnCnLvXkWPr-b_YwAHaE7?w=221&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+      bio: "Founder of Shaadi.com, he is also a seasoned angel investor and Shark Tank India judge.",
+    },
+    {
+      id: 6,
+      name: "Namita Thapar",
+      domain: "Healthcare",
+      sector: "Healthcare",
+      image: "https://th.bing.com/th/id/OIP.v5OstF0vfiVPlShnj70YDwHaEK?w=333&h=187&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+      bio: "Executive Director at Emcure Pharmaceuticals and investor in healthcare startups.",
+    },
+    {
+      id: 7,
+      name: "Vineeta Singh",
+      domain: "Wellness",
+      sector: "Beauty & Wellness",
+      image: "https://th.bing.com/th/id/OIP.mi0umJSDkRru6dYxIUeYhQHaEH?w=333&h=185&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+      bio: "CEO of Sugar Cosmetics, she backs women-led consumer product startups.",
+    },
+    {
+      id: 8,
+      name: "Aman Gupta",
+      domain: "Wellness",
+      sector: "Audio Tech, Lifestyle",
+      image: "https://th.bing.com/th/id/OIP.8VsrhZxpnoWI_Q8AXsjicwHaEF?w=334&h=184&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+      bio: "Co-founder of boAt, investor on Shark Tank India, known for tech-driven consumer goods.",
+    },
+    {
+  id: 9,
+  name: "Rakesh Jhunjhunwala",
+  domain: "Finance",
+  sector: "Stock Market, Investments",
+  image: "https://th.bing.com/th/id/OIP.3RB962_rd8McxIGXpbTgeQHaEN?w=286&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+  bio: "Known as India's Warren Buffett, he was a legendary investor and trader in the Indian stock market.",
+},
+{
+  id: 10,
+  name: "Bhavish Aggarwal",
+  domain: "Tech",
+  sector: "Mobility, Electric Vehicles",
+  image: "https://th.bing.com/th/id/OIP.II6oxHcFroLb3YkCj-hNFQHaEs?w=262&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+  bio: "Co-founder of Ola and Ola Electric, he's shaping India's EV and ride-sharing ecosystem.",
+},
+{
+  id: 11,
+  name: "Dr. Velumani",
+  domain: "Healthcare",
+  sector: "Diagnostics, Healthcare",
+  image: "https://th.bing.com/th/id/OIP.cof51OXfC5-bRmHXFlFrMAAAAA?w=174&h=180&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+  bio: "Founder of Thyrocare, known for transforming diagnostic healthcare in India with affordable testing.",
+},
+{
+  id: 12,
+  name: "Baba Ramdev",
+  domain: "Wellness",
+  sector: "Ayurveda, FMCG",
+  image: "https://th.bing.com/th/id/OIP.ZFHvs_qfEi4mlMSxKQo4DgHaGL?w=219&h=182&c=7&r=0&o=5&cb=iwc2&dpr=1.3&pid=1.7",
+  bio: "Through Patanjali, he helped scale India’s wellness and Ayurveda industry massively.",
+},
+{
+  id: 13,
+  name: "Nikhil Kamath",
+  domain: "Finance",
+  sector: "Stock Broking, WealthTech",
+  image: "https://th.bing.com/th/id/OIP.C6Pz0ohiRuM2wIhYpIBbkQHaE4?w=250&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+  bio: "Co-founder of Zerodha, Nikhil is known for democratizing stock trading and investing in Indian fintech."
+},
+{
+  id: 14,
+  name: "Radhika Gupta",
+  domain: "Finance",
+  sector: "Mutual Funds, Investment",
+  image: "https://th.bing.com/th/id/OIP.CBo8emIzLg3M7CrfpQ3_0gHaE8?rs=1&pid=ImgDetMain",
+  bio: "CEO of Edelweiss AMC, she champions financial literacy and backs innovative finance ventures."
+},
+{
+  id: 15,
+  name: "Harsh Jain",
+  domain: "Tech",
+  sector: "Fantasy Sports, Mobile Tech",
+  image: "data:image/jpeg;base64,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",
+  bio: "Co-founder of Dream11, he’s invested in tech startups revolutionizing sports and gaming."
+},
+{
+  id: 16,
+  name: "Ritesh Agarwal",
+  domain: "Tech",
+  sector: "Hospitality, Tech",
+  image: "https://th.bing.com/th/id/OIP.-1QmEy2D0xAIZ8NOd9V_ZAHaEK?w=269&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+  bio: "Founder of OYO Rooms, he supports tech-first startups disrupting traditional service sectors."
+},
+{
+  id: 17,
+  name: "Siddhartha Roy",
+  domain: "Healthcare",
+  sector: "Biotech, Research",
+  image: "https://th.bing.com/th/id/OIP.ptZwRmjPsg0aN5vvXCGiaQHaE9?w=281&h=188&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+  bio: "CEO of Biocon Biologics, he’s driving biotech investments and healthcare R&D in India."
+},
+{
+  id: 18,
+  name: "Luke Coutinho",
+  domain: "Wellness",
+  sector: "Holistic Health, Wellness",
+  image: "https://th.bing.com/th/id/OIP.O86mDy86mgwypS5Jkp3h3AHaD3?w=320&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+  bio: "A global holistic health coach, Luke invests in wellness brands promoting sustainable living."
+}
+
+
+  ];
+
+  const list = document.getElementById("investor-list");
+
+  function renderInvestors(domain = "All") {
+    list.innerHTML = "";
+    let filtered = domain === "All" ? investors : investors.filter(inv => inv.domain === domain);
+    filtered.forEach(inv => {
+      const card = document.createElement('div');
+      card.className = 'mentor-card';
+      card.innerHTML = `
+        <img src="${inv.image}" alt="${inv.name}">
+        <h3>${inv.name}</h3>
+        <p><strong>Sector:</strong> ${inv.sector}</p>
+        <p>${inv.bio}</p>
+        <button class="connect-btn">Connect</button>
+      `;
+      list.appendChild(card);
+
+      card.querySelector('.connect-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById("modal-message").innerHTML = `
+          <strong>Great choice!</strong><br>
+          You're about to connect with <strong>${inv.name}</strong>, who works in <strong>${inv.sector}</strong>.<br><br>
+          We’ll notify them about your interest. 💬
+        `;
+        document.getElementById("modal").classList.remove("hidden");
+      });
+
+      card.addEventListener('click', () => {
+        card.classList.remove('bounce');
+        void card.offsetWidth;
+        card.classList.add('bounce');
+      });
+    });
+  }
+
+  document.getElementById("domain-filter").addEventListener("change", function () {
+    renderInvestors(this.value);
+  });
+
+  document.getElementById("close-modal").addEventListener("click", () => {
+    document.getElementById("modal").classList.add("hidden");
+  });
+
+  window.addEventListener("click", (e) => {
+    if (e.target === document.getElementById("modal")) {
+      document.getElementById("modal").classList.add("hidden");
+    }
+  });
+
+  // Initial render
+  renderInvestors();
+</script>
+
+</body>
+</html>

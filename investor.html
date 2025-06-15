@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Investor Hub</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      font-family: 'Roboto', sans-serif;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .investor-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .investor-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .investor-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: block;
+      object-fit: cover;
+    }
+
+    .success-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .success-modal h3 {
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+
+    .success-modal .feature-badge {
+      display: inline-block;
+      background-color: #ffc107;
+      color: #000;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      margin: 10px 0;
+    }
+
+    .success-modal .btn-access {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .success-modal .btn-access:hover {
+      background-color: #0056b3;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .success-icon {
+      font-size: 50px;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      z-index: 1000;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal-content {
+      position: relative;
+    }
+
+    #modalClose {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    #appointmentForm {
+      margin-top: 20px;
+    }
+
+    #appointmentForm label {
+      display: block;
+      margin: 10px 0 5px;
+      color: #333;
+    }
+
+    #appointmentForm input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    #appointmentForm button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    #appointmentForm button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div id="investorGrid" class="grid-container"></div>
+
+  <!-- Success Modal -->
+  <div id="modalOverlay" class="modal-overlay"></div>
+  <div id="successModal" class="success-modal">
+    <div class="success-icon">✓</div>
+    <h3>Appointment Booked Successfully!</h3>
+    <p>Great news! Your appointment has been confirmed.</p>
+    <div class="feature-badge">
+      <span>NEW FEATURE UNLOCKED</span>
+    </div>
+    <p><strong>Tax Services</strong> is now available for you!</p>
+    <button class="btn-access" onclick="navigateToTax()">Access Tax Services Now</button>
+  </div>
+
+  <div id="investorModal" class="modal">
+    <div class="modal-content">
+      <span id="modalClose">&times;</span>
+      <h2 id="modalName"></h2>
+      <p id="modalBio"></p>
+      <form id="appointmentForm">
+        <label for="date">Select Date:</label>
+        <input type="datetime-local" id="date" name="date" required />
+        <br />
+        <label for="purpose">Purpose:</label>
+        <input type="text" id="purpose" name="purpose" required />
+        <br />
+        <button type="submit">Book Appointment</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Sample investor data
+    const investors = [
+      {
+        id: 1,
+        name: "Sarah Johnson",
+        image: "https://randomuser.me/api/portraits/women/1.jpg",
+        role: "Angel Investor",
+        bio: "Experienced angel investor with focus on tech startups. Portfolio includes successful exits in SaaS and FinTech.",
+        expertise: ["SaaS", "FinTech", "Early Stage"]
+      },
+      {
+        id: 2,
+        name: "Michael Chen",
+        image: "https://randomuser.me/api/portraits/men/2.jpg",
+        role: "Venture Capitalist",
+        bio: "Partner at Tech Ventures. Interested in AI/ML startups and sustainable technology solutions.",
+        expertise: ["AI/ML", "CleanTech", "Series A"]
+      },
+      {
+        id: 3,
+        name: "Priya Patel",
+        image: "https://randomuser.me/api/portraits/women/3.jpg",
+        role: "Investment Director",
+        bio: "Investment Director at Growth Capital. Focus on scaling businesses and strategic investments.",
+        expertise: ["Growth Stage", "E-commerce", "Healthcare"]
+      }
+    ];
+
+    // Populate investor grid
+    function populateInvestorGrid() {
+      const grid = document.getElementById('investorGrid');
+      investors.forEach(investor => {
+        const card = document.createElement('div');
+        card.className = 'investor-card';
+        card.innerHTML = `
+          <img src="${investor.image}" alt="${investor.name}" class="investor-image">
+          <h3 class="text-center">${investor.name}</h3>
+          <p class="text-center text-muted">${investor.role}</p>
+          <div class="text-center mt-3">
+            <button class="btn btn-primary" onclick="openInvestorModal(${investor.id})">Book Appointment</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Open investor modal
+    function openInvestorModal(investorId) {
+      const investor = investors.find(inv => inv.id === investorId);
+      if (investor) {
+        document.getElementById('modalName').textContent = investor.name;
+        document.getElementById('modalBio').textContent = investor.bio;
+        document.getElementById('investorModal').style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
+      }
+    }
+
+    // Close modal when clicking the X
+    document.getElementById('modalClose').addEventListener('click', function() {
+      document.getElementById('investorModal').style.display = 'none';
+      document.getElementById('modalOverlay').style.display = 'none';
+    });
+
+    // Handle appointment form submission
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Store appointment data
+      const appointmentData = {
+        date: document.getElementById('date').value,
+        purpose: document.getElementById('purpose').value,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Save appointment to localStorage
+      localStorage.setItem('investorAppointment', JSON.stringify(appointmentData));
+      localStorage.setItem('taxServicesEnabled', 'true');
+      
+      // Close appointment modal
+      document.getElementById('investorModal').style.display = 'none';
+      
+      // Show success modal
+      document.getElementById('modalOverlay').style.display = 'block';
+      document.getElementById('successModal').style.display = 'block';
+
+      // Force enable tax services in parent window
+      try {
+        window.opener.postMessage({ type: 'ENABLE_TAX_SERVICES' }, '*');
+      } catch (err) {
+        console.log('Could not notify parent window');
+      }
+
+      // Update navigation if on same page
+      const taxContainer = document.getElementById('taxServicesContainer');
+      if (taxContainer) {
+        taxContainer.style.display = 'block';
+      }
+    });
+
+    // Navigate to tax services
+    function navigateToTax() {
+      localStorage.setItem('taxServicesEnabled', 'true');
+      window.location.href = 'tax.html';
+    }
+
+    // Close success modal and redirect
+    document.getElementById('modalOverlay').addEventListener('click', function() {
+      document.getElementById('modalOverlay').style.display = 'none';
+      document.getElementById('successModal').style.display = 'none';
+    });
+
+    // Check if tax services should be shown
+    function checkTaxServices() {
+      const hasAppointment = localStorage.getItem('investorAppointment');
+      const taxEnabled = localStorage.getItem('taxServicesEnabled');
+      const taxContainer = document.getElementById('taxServicesContainer');
+      
+      // Enable tax services if user has an appointment
+      if (hasAppointment) {
+        localStorage.setItem('taxServicesEnabled', 'true');
+      }
+      
+      if (taxContainer && (hasAppointment || taxEnabled === 'true')) {
+        taxContainer.style.display = 'block';
+      }
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      populateInvestorGrid();
+      checkTaxServices();
+    });
+  </script>
+</body>
+</html>

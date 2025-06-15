@@ -1,0 +1,131 @@
+/* Mobile-specific styles */
+:root {
+    --safe-area-inset-top: env(safe-area-inset-top);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+}
+
+body {
+    -webkit-touch-callout: none;
+    -webkit-text-size-adjust: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-overflow-scrolling: touch;
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: var(--safe-area-inset-bottom);
+}
+
+/* Bottom Navigation */
+.mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1a237e;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    padding-bottom: calc(10px + var(--safe-area-inset-bottom));
+}
+
+.mobile-nav-item {
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-nav-item.active {
+    opacity: 1;
+}
+
+.mobile-nav-item i {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Touch feedback */
+.touch-feedback {
+    position: relative;
+    overflow: hidden;
+}
+
+.touch-feedback::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255,255,255,0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1);
+    animation: touch-ripple 0.6s ease-out;
+}
+
+@keyframes touch-ripple {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(40);
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-section {
+        padding: 15px;
+        margin-top: 10px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .feature-card {
+        padding: 15px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #121212;
+        color: #ffffff;
+    }
+
+    .feature-card {
+        background: #1e1e1e;
+        color: #ffffff;
+    }
+
+    .feature-card h3 {
+        color: #ffffff;
+    }
+
+    .feature-card p {
+        color: #cccccc;
+    }
+
+    .list-group-item {
+        background: #1e1e1e;
+        color: #ffffff;
+    }
+
+    .list-group-item:hover {
+        background: #2d2d2d;
+    }
+} 

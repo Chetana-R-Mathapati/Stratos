@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Investor Connect</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #f8bbd0);
+    }
+    header {
+      background-color: #7bb4d3;
+      color: #f2edf3;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .grid-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding: 40px;
+      justify-content: center;
+    }
+
+    .investor-card {
+      width: 240px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .investor-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+    }
+
+    .investor-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+
+    .investor-card .info {
+      padding: 16px;
+      text-align: center;
+    }
+
+    .investor-card .info h3 {
+      margin: 0 0 6px;
+      color: #00796b;
+    }
+
+    .investor-card .info p {
+      margin: 6px 0;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 14px;
+      max-width: 460px;
+      width: 90%;
+      position: relative;
+    }
+
+    #modalClose {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 24px;
+      color: #888;
+      cursor: pointer;
+    }
+
+    form label {
+      display: block;
+      margin: 12px 0 6px;
+      color: #333;
+    }
+
+    form input, form button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 12px;
+    }
+
+    form button {
+      background-color: #26a69a;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .calendar {
+      position: fixed;
+      bottom: 40px;
+      right: 20px;
+      width: 300px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      font-size: 0.95rem;
+      color: #333;
+      z-index: 999;
+    }
+
+    .calendar-header {
+      text-align: center;
+      margin-bottom: 16px;
+      color: #00796b;
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .calendar-nav select {
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .calendar-nav button {
+      background: #00796b;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .calendar-nav button:hover {
+      background: #00695c;
+    }
+
+    .calendar-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .calendar-table th, .calendar-table td {
+      width: 14.28%;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .calendar-table th {
+      background-color: #f1f1f1;
+    }
+
+    .calendar-table td {
+      background-color: #f9f9f9;
+    }
+
+    .calendar-table td.dark {
+      background-color: #00796b;
+      color: white;
+      position: relative;
+    }
+
+    .calendar-table td.dark::after {
+      content: attr(data-count);
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ff5722;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4caf50;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      font-size: 1rem;
+      display: none;
+      z-index: 9999;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        top: -100px;
+        opacity: 0;
+      }
+      to {
+        top: 20px;
+        opacity: 1;
+      }
+    }
+
+    .toast.error {
+      background: #f44336;
+    }
+
+    .appointment-item {
+      background: #e0f7fa;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .cancel-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .cancel-btn:hover {
+      background: #d32f2f;
+    }
+
+    .investor-rating {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+
+    .rating-stars {
+      color: #ffd700;
+    }
+
+    /* Remove tier badge styles */
+    .tier-badge,
+    .tier-badge.platinum,
+    .tier-badge.gold,
+    .tier-badge.silver,
+    .investor-card {
+      /* Remove all tier-related styles */
+    }
+
+    .preferred-time-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 121, 107, 0.9);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+    }
+
+    .peak-hours {
+      color: #ff5722;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stratos Investor Hub</h1>
+    <p>Connect with India's top investors</p>
+  </header>
+  <div id="investorGrid" class="grid-container"></div>
+
+  <div id="calendar" class="calendar">
+    <div id="calendarHeader" class="calendar-header">
+      <div class="calendar-nav">
+        <button onclick="previousMonth()">&lt;</button>
+        <select id="monthSelect"></select>
+        <select id="yearSelect"></select>
+        <button onclick="nextMonth()">&gt;</button>
+      </div>
+    </div>
+    <table class="calendar-table" id="calendarTable">
+      <thead>
+        <tr>
+          <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+        </tr>
+      </thead>
+      <tbody id="calendarBody"></tbody>
+    </table>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="modalClose">&times;</span>
+      <h3 id="modalTitle"></h3>
+      <form id="appointmentForm">
+        <label for="date">Date & Time</label>
+        <input type="datetime-local" id="date" required>
+        <label for="purpose">Purpose</label>
+        <input type="text" id="purpose" required>
+        <button type="submit">Book Appointment</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="appointmentsModal" class="modal">
+    <div class="modal-content">
+      <span id="closeAppointments">&times;</span>
+      <h2 id="modalDate"></h2>
+      <div id="appointmentDetails"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Appointment Booked!</div>
+
+  <script>
+    const investorGrid = document.getElementById("investorGrid");
+    const calendarBody = document.getElementById("calendarBody");
+    const calendarHeader = document.getElementById("calendarHeader");
+
+    const modal = document.getElementById("modal");
+    const modalClose = document.getElementById("modalClose");
+    const modalTitle = document.getElementById("modalTitle");
+    const appointmentForm = document.getElementById("appointmentForm");
+    const toast = document.getElementById("toast");
+
+    const appointmentsModal = document.getElementById("appointmentsModal");
+    const closeAppointments = document.getElementById("closeAppointments");
+    const modalDate = document.getElementById("modalDate");
+    const appointmentDetails = document.getElementById("appointmentDetails");
+
+    let selectedInvestor = null;
+    const appointments = [];
+
+    // Keep original static investors list
+    const staticInvestors = [
+      { name: "Nandan Nilekani", image: "https://th.bing.com/th/id/OIP.yVos6niUDviWeFBzCtsNaAHaEo?w=257", bio: "Co-founder of Infosys" },
+      { name: "Sanjiv Bajaj", image: "https://th.bing.com/th/id/OIP._k2ocN7WeHBPGmdG4beZ2QHaEK?w=297", bio: "MD of Bajaj Finserv" },
+      { name: "Peyush Bansal", image: "https://ik.imagekit.io/j83rchiauw/A_List_Star/Peyush-Bansal-biography.jpg", bio: "Founder of Lenskart" },
+      { name: "Anupam Mittal", image: "https://th.bing.com/th/id/OIP.6AQFGYnCnLvXkWPr-b_YwAHaE7?w=221", bio: "Founder of Shaadi.com" },
+      { name: "Namita Thapar", image: "https://th.bing.com/th/id/OIP.v5OstF0vfiVPlShnj70YDwHaEK?w=333", bio: "Emcure Pharma ED" },
+      { name: "Vineeta Singh", image: "https://th.bing.com/th/id/OIP.mi0umJSDkRru6dYxIUeYhQHaEH?w=333", bio: "CEO of Sugar Cosmetics" },
+      { name: "Aman Gupta", image: "https://th.bing.com/th/id/OIP.8VsrhZxpnoWI_Q8AXsjicwHaEF?w=334", bio: "Co-founder of boAt" }
+    ];
+
+    // Function to load all investors
+    function loadInvestors() {
+      const storedInvestors = JSON.parse(localStorage.getItem('investors') || '[]');
+      const allInvestors = [...staticInvestors, ...storedInvestors];
+      investorGrid.innerHTML = '';
+
+      allInvestors.forEach(inv => {
+        const card = document.createElement("div");
+        card.className = "investor-card";
+        card.innerHTML = `
+          <img src="${inv.image}" alt="${inv.name}" />
+          <div class="info">
+            <h3>${inv.name}</h3>
+            <p>${inv.bio || inv.occupation || ''}</p>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          selectedInvestor = inv.name;
+          modalTitle.textContent = `Book with ${inv.name}`;
+          modal.style.display = "flex";
+        });
+        investorGrid.appendChild(card);
+      });
+    }
+
+    // Initial load of investors
+    loadInvestors();
+
+    // Listen for changes in localStorage
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'investors') {
+        loadInvestors();
+      }
+    });
+
+    modalClose.onclick = () => modal.style.display = "none";
+    closeAppointments.onclick = () => appointmentsModal.style.display = "none";
+
+    appointmentForm.onsubmit = e => {
+      e.preventDefault();
+      const dateInput = document.getElementById("date");
+      const selectedDate = new Date(dateInput.value);
+      const now = new Date();
+      
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const selectedDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+      
+      if (selectedDay < today) {
+        showToast("Cannot book appointments for past dates!", true);
+        return;
+      }
+
+      const purpose = document.getElementById("purpose").value;
+      appointments.push({ 
+        investor: selectedInvestor, 
+        date: dateInput.value, 
+        purpose 
+      });
+      
+      modal.style.display = "none";
+      showToast("Appointment Booked Successfully!");
+
+      monthSelect.value = selectedDate.getMonth();
+      yearSelect.value = selectedDate.getFullYear();
+      currentMonth = selectedDate.getMonth();
+      
+      updateCalendar();
+    };
+
+    function showToast(message, isError = false) {
+      toast.textContent = message;
+      toast.className = isError ? "toast error" : "toast";
+      toast.style.display = "block";
+      setTimeout(() => toast.style.display = "none", 3000);
+    }
+
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    
+    // Initialize month and year selects
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    months.forEach((month, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = month;
+      monthSelect.appendChild(option);
+    });
+    
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    }
+    
+    // Set current month and year
+    let currentMonth = new Date().getMonth();
+    monthSelect.value = currentMonth;
+    yearSelect.value = currentYear;
+    
+    function previousMonth() {
+      if (currentMonth === 0) {
+        currentMonth = 11;
+        yearSelect.value = parseInt(yearSelect.value) - 1;
+      } else {
+        currentMonth--;
+      }
+      monthSelect.value = currentMonth;
+      updateCalendar();
+    }
+    
+    function nextMonth() {
+      if (currentMonth === 11) {
+        currentMonth = 0;
+        yearSelect.value = parseInt(yearSelect.value) + 1;
+      } else {
+        currentMonth++;
+      }
+      monthSelect.value = currentMonth;
+      updateCalendar();
+    }
+    
+    // Add event listeners for month and year selection
+    monthSelect.addEventListener('change', (e) => {
+      currentMonth = parseInt(e.target.value);
+      updateCalendar();
+    });
+    
+    yearSelect.addEventListener('change', () => {
+      updateCalendar();
+    });
+
+    function updateCalendar() {
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      const first = new Date(year, month, 1);
+      const last = new Date(year, month + 1, 0);
+      const startDay = first.getDay();
+      const totalDays = last.getDate();
+
+      // Clear the calendar body
+      calendarBody.innerHTML = "";
+      let row = document.createElement("tr");
+
+      // Add empty cells for days before the first day of the month
+      for (let i = 0; i < startDay; i++) {
+        const emptyCell = document.createElement("td");
+        row.appendChild(emptyCell);
+      }
+
+      // Add days of the month
+      for (let day = 1; day <= totalDays; day++) {
+        if (row.children.length === 7) {
+          calendarBody.appendChild(row);
+          row = document.createElement("tr");
+        }
+
+        const cell = document.createElement("td");
+        cell.textContent = day;
+
+        // Get appointments for this day
+        const dayAppointments = appointments.filter(app => {
+          const d = new Date(app.date);
+          return d.getDate() === day && 
+                 d.getMonth() === month && 
+                 d.getFullYear() === year;
+        });
+
+        // Add today's date highlight
+        const today = new Date();
+        if (day === today.getDate() && 
+            month === today.getMonth() && 
+            year === today.getFullYear()) {
+          cell.style.border = '2px solid #00796b';
+        }
+
+        if (dayAppointments.length > 0) {
+          cell.classList.add("dark");
+          cell.setAttribute('data-count', dayAppointments.length);
+        }
+
+        cell.onclick = () => {
+          modalDate.textContent = `${months[month]} ${day}, ${year}`;
+          displayAppointments();
+          appointmentsModal.style.display = "flex";
+        };
+
+        row.appendChild(cell);
+      }
+
+      // Add the last row if it has any days
+      if (row.children.length > 0) {
+        calendarBody.appendChild(row);
+      }
+    }
+
+    // Update the date input min and max based on selected month
+    function updateDateInputLimits() {
+      const dateInput = document.getElementById('date');
+      const year = parseInt(yearSelect.value);
+      const month = parseInt(monthSelect.value);
+      const today = new Date();
+      
+      // Set min date to today or first day of selected month if it's in the future
+      const firstOfMonth = new Date(year, month, 1);
+      const minDate = firstOfMonth > today ? firstOfMonth : today;
+      
+      // Set max date to last day of selected month
+      const lastOfMonth = new Date(year, month + 1, 0);
+      
+      dateInput.min = minDate.toISOString().split('T')[0];
+      dateInput.max = lastOfMonth.toISOString().split('T')[0];
+    }
+
+    // Add event listeners for month/year changes to update date input limits
+    monthSelect.addEventListener('change', updateDateInputLimits);
+    yearSelect.addEventListener('change', updateDateInputLimits);
+
+    // Initial calendar setup
+    updateDateInputLimits();
+    updateCalendar();
+
+    function cancelAppointment(index) {
+      const confirmMessage = "Are you sure you want to cancel this appointment?";
+
+      if (confirm(confirmMessage)) {
+        appointments.splice(index, 1);
+        showToast("Appointment cancelled successfully.");
+        updateCalendar();
+        displayAppointments();
+      }
+    }
+
+    function displayAppointments() {
+      const dayAppointments = appointments.filter(app => {
+        const d = new Date(app.date);
+        return d.getDate() === parseInt(modalDate.textContent.split(' ')[1]) && 
+               months.indexOf(modalDate.textContent.split(' ')[0]) === d.getMonth() &&
+               parseInt(modalDate.textContent.split(' ')[2]) === d.getFullYear();
+      });
+
+      appointmentDetails.innerHTML = "";
+      dayAppointments.forEach((app, index) => {
+        appointmentDetails.innerHTML += `
+          <div class="appointment-item">
+            <h3>${app.investor}</h3>
+            <p><strong>Time:</strong> ${new Date(app.date).toLocaleTimeString()}</p>
+            <p><strong>Purpose:</strong> ${app.purpose}</p>
+            <button 
+              class="cancel-btn" 
+              onclick="cancelAppointment(${appointments.indexOf(app)})"
+            >
+              Cancel Appointment
+            </button>
+          </div>`;
+      });
+    }
+  </script>
+</body>
+</html>
+
+

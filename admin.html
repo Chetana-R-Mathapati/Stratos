@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 50px auto;
+        }
+        h1 {
+            color: #4a90e2;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            float: right;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .card {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+
+        <div class="section">
+            <h2>Manage Investors</h2>
+            <p>List of Investors from Firebase:</p>
+            <div id="investorsList" class="row">
+                <p>Loading investors...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Manage Mentors</h2>
+            <p>List of Mentors from Firebase:</p>
+            <div id="mentorsList" class="row">
+                <p>Loading mentors...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Other Admin Functions</h2>
+            <p>Add more administrative controls here (e.g., user roles, site settings).</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            const investorsList = document.getElementById('investorsList');
+            const mentorsList = document.getElementById('mentorsList');
+
+            // --- Client-side Admin Access Control (Basic Check) ---
+            // IMPORTANT: This only prevents access if localStorage is manipulated.
+            // True security requires server-side checks.
+            if (localStorage.getItem('isAdmin') !== 'true' || localStorage.getItem('userLoggedIn') !== 'true') {
+                alert('Access Denied. Please login as an admin.');
+                window.location.href = 'login.html';
+                return; // Stop execution if not admin
+            }
+
+            // Logout functionality for admin
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    await firebase.auth().signOut(); // Sign out from Firebase Auth
+                    localStorage.removeItem('userLoggedIn');
+                    localStorage.removeItem('isAdmin'); // Remove admin flag
+                    localStorage.removeItem('user'); // Clear user data
+                    localStorage.removeItem('savedUser'); // Clear saved credentials
+                    window.location.href = 'login.html'; // Redirect to login page
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                    alert('Error logging out. Please try again.');
+                }
+            });
+
+            // --- Function to fetch and display investors ---
+            async function fetchAndDisplayInvestors() {
+                investorsList.innerHTML = '<p>Fetching investors...</p>';
+                try {
+                    const investorsSnapshot = await db.collection('investors').get();
+                    if (investorsSnapshot.empty) {
+                        investorsList.innerHTML = '<p>No investors found in the database.</p>';
+                        return;
+                    }
+                    investorsList.innerHTML = ''; // Clear loading message
+
+                    investorsSnapshot.forEach(doc => {
+                        const investor = { id: doc.id, ...doc.data() };
+                        const investorCard = document.createElement('div');
+                        investorCard.className = 'col-md-6 mb-3';
+                        investorCard.innerHTML = `
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${investor.name}</h5>
+                                    <p class="card-text">Email: ${investor.email}</p>
+                                    <p class="card-text">Occupation: ${investor.occupation}</p>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteRecord('investors', '${investor.id}')">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                        investorsList.appendChild(investorCard);
+                    });
+
+                } catch (error) {
+                    console.error('Error fetching investors:', error);
+                    investorsList.innerHTML = '<p style="color: red;">Error loading investors.</p>';
+                }
+            }
+
+            // --- Function to fetch and display mentors ---
+            async function fetchAndDisplayMentors() {
+                mentorsList.innerHTML = '<p>Fetching mentors...</p>';
+                try {
+                    const mentorsSnapshot = await db.collection('mentors').get();
+                    if (mentorsSnapshot.empty) {
+                        mentorsList.innerHTML = '<p>No mentors found in the database.</p>';
+                        return;
+                    }
+                    mentorsList.innerHTML = ''; // Clear loading message
+
+                    mentorsSnapshot.forEach(doc => {
+                        const mentor = { id: doc.id, ...doc.data() };
+                        const mentorCard = document.createElement('div');
+                        mentorCard.className = 'col-md-6 mb-3';
+                        mentorCard.innerHTML = `
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${mentor.name}</h5>
+                                    <p class="card-text">Email: ${mentor.email}</p>
+                                    <p class="card-text">Domain: ${mentor.domain || 'N/A'}</p>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteRecord('mentors', '${mentor.id}')">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                        mentorsList.appendChild(mentorCard);
+                    });
+
+                } catch (error) {
+                    console.error('Error fetching mentors:', error);
+                    mentorsList.innerHTML = '<p style="color: red;">Error loading mentors.</p>';
+                }
+            }
+
+            // --- Universal Delete Function (Client-Side - Requires Server-Side Security for Production) ---
+            window.deleteRecord = async function(collectionName, documentId) {
+                if (!confirm(`Are you sure you want to delete this record from ${collectionName}? This action cannot be undone.`)) {
+                    return;
+                }
+
+                try {
+                    // This is a direct client-side delete. For production, this should trigger a
+                    // server-side function (e.g., via your server.js or Firebase Cloud Functions)
+                    // that verifies admin authorization before deleting.
+                    await db.collection(collectionName).doc(documentId).delete();
+                    alert('Record deleted successfully!');
+                    // Refresh lists after deletion
+                    if (collectionName === 'investors') {
+                        fetchAndDisplayInvestors();
+                    } else if (collectionName === 'mentors') {
+                        fetchAndDisplayMentors();
+                    }
+                } catch (error) {
+                    console.error(`Error deleting record from ${collectionName}:`, error);
+                    alert(`Failed to delete record: ${error.message}`);
+                }
+            };
+
+            // Initial fetch of data when admin panel loads
+            fetchAndDisplayInvestors();
+            fetchAndDisplayMentors();
+        });
+    </script>
+</body>
+</html>

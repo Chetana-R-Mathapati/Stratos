@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stratos</title>
+    <script type="text/javascript" src="cordova.js"></script>
+    <!-- Add jQuery for better compatibility -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .splash-container {
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 75px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .app-name {
+            color: white;
+            font-size: 2em;
+            margin: 20px 0;
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2em;
+            margin-top: 10px;
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-dots {
+            margin-top: 20px;
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+            animation-delay: 1s;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            background-color: white;
+            border-radius: 50%;
+            animation: dotPulse 1.5s infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <img src="videos/logo.jpg" alt="Stratos Logo" class="logo">
+        <h1 class="app-name">Stratos</h1>
+        <p class="tagline">Vision to Venture</p>
+        <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+
+    <script>
+        // Function to check login status
+        function checkLoginStatus() {
+            try {
+                console.log('Checking login status...');
+                const userLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+                const userData = localStorage.getItem('user');
+                
+                if (userLoggedIn && userData) {
+                    console.log('User is logged in, redirecting to index.html');
+                    return true;
+                }
+                
+                console.log('User is not logged in');
+                return false;
+            } catch (error) {
+                console.error('Error checking login status:', error);
+                return false;
+            }
+        }
+
+        // Function to handle redirection
+        function redirectToNextPage() {
+            try {
+                console.log('Attempting redirection...');
+                if (checkLoginStatus()) {
+                    window.location.replace('index.html');
+                } else {
+                    // Clear any stale data
+                    localStorage.removeItem('userLoggedIn');
+                    localStorage.removeItem('user');
+                    window.location.replace('signin.html');
+                }
+            } catch (error) {
+                console.error('Redirection error:', error);
+                // Fallback redirection
+                window.location.href = 'signin.html';
+            }
+        }
+
+        // Function to initialize app
+        function initApp() {
+            console.log('Initializing app...');
+            // Set timeout for splash screen
+            setTimeout(redirectToNextPage, 3000); // 3 seconds
+        }
+
+        // Listen for deviceready event
+        document.addEventListener('deviceready', function() {
+            console.log('Device is ready');
+            initApp();
+        }, false);
+
+        // Fallback for browser testing
+        if (!window.cordova) {
+            console.log('Running in browser mode');
+            $(document).ready(function() {
+                initApp();
+            });
+        }
+
+        // Additional fallback
+        setTimeout(function() {
+            console.log('Fallback timeout triggered');
+            if (!document.hidden) {
+                redirectToNextPage();
+            }
+        }, 4000); // 4 seconds fallback
+    </script>
+</body>
+</html> 

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Startup News Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #d7c9ff, #f4e7ff);
+      margin: 0;
+      padding: 40px 20px;
+      color: #3c1053;
+    }
+
+    .news-container {
+      max-width: 800px;
+      margin: auto;
+      background: #f8f4ff;
+      border-radius: 24px;
+      padding: 40px 30px;
+      box-shadow: 0 12px 40px rgba(145, 69, 255, 0.2);
+    }
+
+    h2 {
+      font-size: 32px;
+      color: #3c1053;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p.description {
+      text-align: center;
+      color: #6b4c9a;
+      margin-bottom: 24px;
+    }
+
+    .select-wrapper {
+      position: relative;
+      width: 260px;
+      margin: 0 auto 30px;
+    }
+    .select-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      width: 12px; height: 12px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%239145ff' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-size: 12px;
+      background-repeat: no-repeat;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+    .select-wrapper.open::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    #category-select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 100%;
+      padding: 12px 18px;
+      border: 2px solid #9145ff;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #fff;
+      color: #3c1053;
+      box-shadow: 0 4px 16px rgba(145, 69, 255, 0.25);
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #category-select:focus {
+      outline: none;
+      border-color: #6c2bd9;
+      box-shadow: 0 0 0 3px rgba(145, 69, 255, 0.3);
+    }
+
+    select option {
+      color: #9145ff;
+      background-color: #f8f4ff;
+      font-weight: 500;
+    }
+
+    select option:checked {
+      background-color: #9145ff;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .news-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 16px rgba(145, 69, 255, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .news-card h3 {
+      font-size: 18px;
+      color: #3c1053;
+      margin-bottom: 6px;
+    }
+
+    .news-card p {
+      color: #6b4c9a;
+      margin-bottom: 8px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    a {
+      color: #9145ff;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      background-color: transparent;
+      color: #9145ff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      text-decoration: underline;
+    }
+
+    .controls {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .controls button {
+      margin: 0 8px;
+      background-color: #9145ff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .controls button:hover {
+      background-color: #6c2bd9;
+    }
+  </style>
+</head>
+<body>
+  <div class="news-container">
+    <h2>Latest in <span id="category-title">Tech</span></h2>
+    <p class="description">Curated startup news from each sector</p>
+
+    <div class="select-wrapper">
+      <select id="category-select">
+        <option value="">-- Choose an option --</option>
+        <option value="Tech">Tech</option>
+        <option value="Health">Health</option>
+        <option value="Finance">Finance</option>
+        <option value="Education">Education</option>
+        <option value="Retail">Retail</option>
+      </select>
+    </div>
+
+    <div class="controls">
+      <button onclick="showSavedArticles()">View Saved Articles</button>
+      <button onclick="clearSavedArticles()">Clear Saved</button>
+    </div>
+
+    <div id="news-list"></div>
+  </div>
+
+  <script>
+    const newsData = {
+      Tech: [
+        {
+          title: "AI Startup Anthropic Raises $5B for Claude Expansion",
+          snippet: "Anthropic secures new funding to compete in the enterprise AI space.",
+          link: "https://www.reuters.com/technology/anthropic-5b-raise-2025"
+        },
+        {
+          title: "QuantumLeap Technologies Introduces Affordable Quantum Chips",
+          snippet: "Startup unveils accessible quantum hardware for developers and researchers.",
+          link: "https://www.techcrunch.com/quantumleap-startup-2025"
+        },
+        {
+          title: "StartOS Launches Open AI-Powered Operating System",
+          snippet: "New open-source OS integrates AI across core apps and workflow.",
+          link: "https://www.theverge.com/startos-launch-2025"
+        }
+      ],
+      Health: [
+        {
+          title: "NeuroNova Gets $200M to Fight Parkinson’s With AI",
+          snippet: "Health startup uses neural nets to model patient responses.",
+          link: "https://www.statnews.com/neuronova-raise-2025"
+        },
+        {
+          title: "FitGen Launches DNA-Based Personalized Health Plans",
+          snippet: "New platform tailors fitness and nutrition based on genomics.",
+          link: "https://www.medicalstartups.io/fitgen-dna"
+        },
+        {
+          title: "MindBot Raises $50M for AI Mental Health Companion",
+          snippet: "Startup develops conversational agent for guided self-therapy.",
+          link: "https://www.healthtechnews.com/mindbot-raise-2025"
+        }
+      ],
+      Finance: [
+        {
+          title: "FinVerse Disrupts Wealth Management With LLM Advisor",
+          snippet: "AI-first fintech startup offers automated financial planning.",
+          link: "https://www.bloomberg.com/finverse-startup"
+        },
+        {
+          title: "VaultPay Raises $80M to Modernize B2B Payments",
+          snippet: "Streamlined invoicing and global transactions via blockchain.",
+          link: "https://www.coindesk.com/vaultpay-raise-2025"
+        },
+        {
+          title: "Lendly Launches Microcredit Platform for Gig Workers",
+          snippet: "New fintech gives freelancers instant access to credit.",
+          link: "https://www.cnbc.com/lendly-launch"
+        }
+      ],
+      Education: [
+        {
+          title: "LearnSphere Rolls Out AI-Driven Classrooms",
+          snippet: "EdTech startup creates dynamic learning environments.",
+          link: "https://www.edtechmagazine.com/learnsphere-ai"
+        },
+        {
+          title: "CodeFirst Expands Free Bootcamps in Rural Areas",
+          snippet: "Startup provides tech education in underserved regions.",
+          link: "https://www.educationtoday.com/codefirst-expansion"
+        },
+        {
+          title: "TutorBot Raises $30M for Personalized AI Tutoring",
+          snippet: "One-on-one learning experience powered by generative AI.",
+          link: "https://www.nytimes.com/tutorbot-ai-2025"
+        }
+      ],
+      Retail: [
+        {
+          title: "SnapFit Launches AR-Based Smart Mirror for Clothing",
+          snippet: "Retail startup reimagines dressing rooms with augmented reality.",
+          link: "https://www.fastcompany.com/snapfit-ar"
+        },
+        {
+          title: "QuickCart Expands 10-Min Grocery Delivery to New Cities",
+          snippet: "Hyperlocal startup brings ultra-fast delivery to suburbs.",
+          link: "https://www.forbes.com/quickcart-expansion"
+        },
+        {
+          title: "StoreIQ Uses Computer Vision to Eliminate Checkout Lines",
+          snippet: "Startup uses sensors and AI to automate physical retail.",
+          link: "https://www.cnn.com/storeiq-no-checkout"
+        }
+      ]
+    };
+
+    const categorySelect = document.getElementById("category-select");
+    const newsList = document.getElementById("news-list");
+    const categoryTitle = document.getElementById("category-title");
+
+    function saveArticle(article) {
+      let saved = JSON.parse(localStorage.getItem("savedArticles")) || [];
+      if (!saved.some(a => a.title === article.title)) {
+        saved.push(article);
+        localStorage.setItem("savedArticles", JSON.stringify(saved));
+        alert("Article saved!");
+      } else {
+        alert("Article already saved!");
+      }
+    }
+
+    function getLikes(title) {
+      const likes = JSON.parse(localStorage.getItem("likes")) || {};
+      return likes[title] || 0;
+    }
+
+    function likeArticle(title, btn) {
+      const likes = JSON.parse(localStorage.getItem("likes")) || {};
+      likes[title] = (likes[title] || 0) + 1;
+      localStorage.setItem("likes", JSON.stringify(likes));
+      btn.textContent = 👍 ${likes[title]};
+    }
+
+    function createCard(article) {
+      const card = document.createElement("div");
+      card.className = "news-card";
+      const likeCount = getLikes(article.title);
+      card.innerHTML = `
+        <h3>${article.title}</h3>
+        <p>${article.snippet}</p>
+        <div class="card-footer">
+          <a href="${article.link}" target="_blank">Read More</a>
+          <button onclick='saveArticle(${JSON.stringify(article)})'>Save</button>
+          <button onclick='likeArticle("${article.title.replace(/"/g, '&quot;')}", this)'>👍 ${likeCount}</button>
+        </div>
+      `;
+      return card;
+    }
+
+    function renderNews(category) {
+      if (!newsData[category]) return;
+      newsList.innerHTML = "";
+      categoryTitle.textContent = category;
+      newsData[category].forEach(article => {
+        const card = createCard(article);
+        newsList.appendChild(card);
+      });
+    }
+
+    function showSavedArticles() {
+      const saved = JSON.parse(localStorage.getItem("savedArticles")) || [];
+      newsList.innerHTML = "";
+      categoryTitle.textContent = "Saved Articles";
+
+      if (saved.length === 0) {
+        newsList.innerHTML = "<p style='text-align:center;'>No articles saved yet.</p>";
+        return;
+      }
+
+      saved.forEach(article => {
+        const card = createCard(article);
+        newsList.appendChild(card);
+      });
+    }
+
+    function clearSavedArticles() {
+      if (confirm("Are you sure you want to clear all saved articles?")) {
+        localStorage.removeItem("savedArticles");
+        alert("All saved articles cleared!");
+        showSavedArticles();
+      }
+    }
+
+    categorySelect.addEventListener("change", (e) => {
+      if (e.target.value) renderNews(e.target.value);
+      else {
+        newsList.innerHTML = "";
+        categoryTitle.textContent = "_";
+      }
+    });
+
+    const wrapper = document.querySelector('.select-wrapper');
+    categorySelect.addEventListener('mousedown', () => wrapper.classList.add('open'));
+    categorySelect.addEventListener('blur', () => wrapper.classList.remove('open'));
+
+    renderNews("Tech");
+    const searchBar = document.getElementById('search-bar');
+
+searchBar.addEventListener('input', () => {
+  const query = searchBar.value.toLowerCase();
+  const filteredData = newsData[categoryTitle.textContent].filter(article => 
+    article.title.toLowerCase().includes(query) || article.snippet.toLowerCase().includes(query)
+  );
+  
+  renderFilteredNews(filteredData);
+});
+
+function renderFilteredNews(filteredData) {
+  newsList.innerHTML = "";
+  filteredData.forEach(article => {
+    const card = createCard(article);
+    newsList.appendChild(card);
+  });
+}
+
+  </script>
+</body>
+</html>

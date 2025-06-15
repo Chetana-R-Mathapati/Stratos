@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratos - Empowering Innovation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom CSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .navbar-brand img {
+            height: 70px;
+            width: auto;
+            border-radius: 40px;
+        }
+
+   
+
+
+        .content-section {
+            padding: 50px 0;
+        }
+
+        .content-section video {
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            max-width: 100%; /* Ensure video scales down */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Success Stories Carousel Styling */
+        .trending-blogs {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .trending-blogs h4 {
+            color: #333; /* Darker color for better contrast on light background */
+            margin-bottom: 25px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .trending-blogs .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            width: 100%; /* Make card take full width of its column */
+            max-width: 350px; /* Limit card width on large screens */
+            margin: auto; /* Center the card */
+        }
+
+        .trending-blogs .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .trending-blogs .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .trending-blogs .card-body {
+            padding: 20px;
+            text-align: left;
+        }
+
+        .trending-blogs .card-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .trending-blogs .card-text.short {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .trending-blogs .card-text.full-description {
+            display: none; /* Hidden by default */
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .trending-blogs .card-link {
+            color: #13223F;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .trending-blogs .card-link:hover {
+            color: #13223F;
+        }
+
+        .blog-carousel-control {
+            color: #13223F;
+            width: 5%;
+            opacity: 1;
+        }
+
+        .blog-carousel-control:hover {
+            color: #13223F;
+        }
+
+        /* Startup Funding Trends Section */
+       /* Custom CSS */
+/* ... (previous CSS styles) ... */
+
+/* Startup Funding Trends Section */
+
+
+/* ... (rest of your CSS) ... */
+
+        /* Mentor Network Section */
+        .mentor-section {
+            padding-top: 30px;
+            padding-bottom: 50px;
+            background-color:#13223F;
+        }
+
+        .mentor-section h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 30px;
+        }
+
+        .mentor-section p {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 20px;
+        }
+
+        .mentor-section .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .mentor-section .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Impact Growth Graph */
+       #impact {
+    background-color: #f9f9f9;
+    padding: 60px 20px;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#impact h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.impact-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px;
+    flex-wrap: nowrap;            /* Force horizontal layout */
+    overflow-x: auto;             /* Scroll on smaller screens */
+    -webkit-overflow-scrolling: touch;
+    padding: 0 10px;
+    scroll-behavior: smooth;
+}
+
+.impact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+    flex-shrink: 0;
+}
+
+.bar {
+    width: 60px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: grow 1s ease-in-out;
+}
+
+.bar.green {
+    background-color: #4CAF50;
+    height: 200px;
+}
+
+.bar.blue {
+    background-color: #2196F3;
+    height: 120px;
+}
+
+.bar.orange {
+    background-color: #FFA500;
+    height: 160px;
+}
+
+.bar:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s;
+}
+
+.value {
+    margin-top: 12px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+@keyframes grow {
+    from {
+        transform: scaleY(0);
+        opacity: 0;
+    }
+    to {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+        /* Footer */
+        footer a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        /* RESPONSIVENESS */
+        @media (max-width: 991.98px) { /* Medium devices and down (for collapsing navbar content) */
+            .navbar-nav {
+                text-align: center;
+                margin-top: 15px;
+            }
+            .navbar-nav .nav-item {
+                margin-bottom: 10px;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            .navbar-brand {
+                margin-right: 0; /* Adjust brand margin */
+                
+            }
+            
+        }
+
+        @media (max-width: 767.98px) { /* Small devices and down */
+            .content-section .col-md-8,
+            .content-section .col-md-4 { /* Target the main content columns */
+                margin-bottom: 30px; /* Add space between stacked elements */
+            }
+            .trending-blogs h4 {
+                font-size: 1.7rem;
+            }
+            .mentor-section h3 {
+                font-size: 26px;
+            }
+            .mentor-section p {
+                font-size: 16px;
+            }
+            .mentor-section .col-md-3 {
+                padding-top: 20px !important; /* Reduce top padding on mobile */
+            }
+            footer .col-md-4 {
+                margin-bottom: 30px; /* Add space between stacked footer columns */
+                text-align: center; /* Center footer content */
+            }
+            footer .list-unstyled {
+                padding-left: 0;
+            }
+
+        }
+
+        @media (max-width: 575.98px) { /* Extra small devices (portrait phones) */
+            .content-section {
+                padding: 30px 0;
+            }
+            .trending-blogs .card-img-top {
+                height: 150px;
+            }
+            .trending-blogs .card-body {
+                padding: 15px;
+            }
+            #impact h2 {
+                font-size: 26px;
+            }
+            .impact-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .impact-item {
+                max-width: 150px;
+            }
+            .bar {
+                max-width: 60px;
+            }
+            .value {
+                font-size: 16px;
+            }
+            .label {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+  .navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: #1E1E2A;
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1050;
+  }
+
+  .navbar-collapse.show {
+    transform: translateX(0);
+  }
+
+  .navbar-nav .navbar-nav:hover{
+    flex-direction: column;
+    color:#0056b3;
+    background-color:#0288d1
+  }
+
+  .nav-link {
+    padding: 0.75rem 0;
+    font-size: 1rem;
+  }
+
+  #authSection {
+    margin-top: 1.5rem;
+    flex-direction: column;
+  }
+
+  #authSection .btn {
+    width: 100%;
+    margin: 0.4rem 0;
+  }
+}
+.navbar-nav .nav-link:hover{
+    background-color: #cdeefc !important;
+    color:black !important;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+@media (max-width: 991.98px) {
+  .navbar-nav .nav-link {
+    padding: 0.75rem 0; /* default padding */
+  }
+
+  .navbar-nav .nav-link:hover {
+    background-color: #cdeefc !important;
+    color: black !important;
+    border-radius: 5px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 0.75rem 0; /* same padding as default to avoid shake */
+  }
+}
+
+
+/* Smooth transition for all hoverable elements */
+</style>
+<style>
+    /* ... your other CSS ... */
+
+    /* Updated CSS for the "locked" navigation items */
+.nav-item.locked-nav-item {
+    opacity: 0.4;        /* Make it semi-transparent (faded) */
+    pointer-events: none; /* This makes the item unclickable */
+    cursor: not-allowed; /* Changes the mouse cursor */
+    transition: opacity 0.3s ease; /* Smooth transition */
+    /* IMPORTANT: Ensure there is NO 'display: none;' here or anywhere else affecting these items */
+}
+
+    /* You might want to make them look normal on hover if they are unlocked */
+    .nav-item:not(.locked-nav-item) .nav-link:hover {
+        opacity: 1; /* Ensure full opacity on hover if not locked */
+        filter: none; /* No blur to begin with, so 'none' just ensures no lingering effects */
+    }
+
+</style>
+</head>
+<body>
+
+    <div class="bg-container">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#0a101b; padding: 0.8rem 2rem;">
+    <a class="navbar-brand" href="#">
+        <img src="videos/logo.jpg" alt="Logo" />
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item" id="homeNavItem" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;"><a class="nav-link text-white" href="index.html">Home</a></li>
+            <li class="nav-item" id="ideaIncubationNavItem"><a class="nav-link text-white" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;" href="idea-incubation.html">Idea Incubation</a></li>
+            <li class="nav-item" id="mentorConnectNavItem"><a class="nav-link text-white" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;" href="mentor.html">Mentor Connect</a></li>
+            <li class="nav-item" id="investorHubNavItem"><a class="nav-link text-white" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;" href="funds.html">Investor Hub</a></li>
+            <li class="nav-item" id="collabNavItem"><a class="nav-link text-white" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;" href="join.html">Collab</a></li>
+            <li class="nav-item" id="industryInsightsNavItem"><a class="nav-link text-white" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;"href="news.html">Industry Insights</a></li>
+            <li class="nav-item" id="promoZoneNavItem"><a class="nav-link text-white" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;" href="promo.html">Promo Zone</a></li>
+            <li class="nav-item" id="taxServicesContainer" style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">
+                <a class="nav-link text-white" href="tax.html">
+                    Tax Services <span class="badge badge-warning">NEW</span>
+                </a>
+            </li>
+        </ul>
+        <div id="authSection" class="d-flex align-items-center">
+            <a href="login.html" id="loginLink" class="btn btn-outline-light mr-2">Log In</a>
+            <a href="signin.html" id="signupLink" class="btn" style="background-color:#fdfeff;border-color:black;border-width:2px">Sign In &rarr;</a>
+            <button id="logoutBtn" class="btn btn-outline-light" style="display: none;">Logout</button>
+        </div>
+    </div>
+</nav>
+        <div class="container-fluid content-section" style="background-color:#13223F">
+            <div class="row">
+               <div class="col-lg-8 col-md-12 d-flex justify-content-center align-items-center mb-4 px-3">
+    <div class="w-100" style="max-height:500px; overflow:hidden;">
+        <video autoplay muted loop playsinline class="w-100 h-auto" style="max-height:500px; border-radius: 12px;">
+            <source src="videos/video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+
+                <div class="col-lg-4 col-md-12">
+                    <div class="trending-blogs">
+                        <h4 class="text-center" style="color:white;font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">Success Stories</h4>
+                        <div id="blogCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+
+                                <div class="carousel-item active">
+                                    <div class="card mx-auto">
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFvgShDSHxS9JXboiHtc7BXWjisJ_hvG_Dhw&s" class="card-img-top" alt="Nykaa">
+                                        <div class="card-body">
+                                            <small class="text-muted">Falguni Nayar</small>
+                                            <h6 class="card-title">Nykaa</h6>
+                                            <p class="card-text short">Started as a beauty product website, now a top lifestyle platform.</p>
+                                            <p class="card-text full-description">Nykaa expanded beyond online beauty to physical stores and lifestyle products, becoming a market leader in India.</p>
+                                            <a href="#" class="card-link toggle-link">Read More &rarr;</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="carousel-item">
+                                    <div class="card mx-auto">
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSc-PgzVLHSfnGP0C7NVzofxPmtSypyZdZBw&s" class="card-img-top" alt="Paytm">
+                                        <div class="card-body">
+                                            <small class="text-muted">Vijay Shekhar Sharma</small>
+                                            <h6 class="card-title">Paytm</h6>
+                                            <p class="card-text short">Started as a mobile payment platform, now a super app.</p>
+                                            <p class="card-text full-description">Paytm expanded into payments, financial services, shopping, and more, becoming India's leading fintech brand.</p>
+                                            <a href="#" class="card-link toggle-link">Read More &rarr;</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="carousel-item">
+                                    <div class="card mx-auto">
+                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJPIiWrRBATV9Ra8ZNjUMzpvSXtXx0Pn-99Q&s" class="card-img-top" alt="Meesho">
+                                        <div class="card-body">
+                                            <small class="text-muted">Vidit Aatrey & Sanjeev Barnwal</small>
+                                            <h6 class="card-title">Meesho</h6>
+                                            <p class="card-text short">Social commerce connecting small retailers with consumers.</p>
+                                            <p class="card-text full-description">Meesho empowered micro-entrepreneurs to sell online, revolutionizing social e-commerce in India.</p>
+                                            <a href="#" class="card-link toggle-link">Read More &rarr;</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <a class="carousel-control-prev blog-carousel-control" href="#blogCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next blog-carousel-control" href="#blogCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid py-5" style="background-color:white;">
+            <h3 class="text-center mb-4"style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Startup Funding Trends</h3>
+            <canvas id="fundingChart" height="100"></canvas>
+        </div>
+
+        <div class="container-fluid pb-5 mentor-section" style="background-color:#13223F">
+            <h3 class="text-center mb-4" style="padding-top:30px;color:white;font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Our Mentor Network</h3>
+            <p class="text-center mb-5" style="padding-top:20px;color:rgb(245, 157, 157)">Connect with experienced mentors across domains like technology, entrepreneurship, design, and more.</p>
+            <div class="row justify-content-center">
+                <div class="col-md-3 col-sm-6 mb-4" style="padding-top: 40px;">
+                    <div class="card text-center p-3">
+                        <h6 class="text-muted">Mentor</h6>
+                        <h5 class="font-weight-bold mt-2">Dr. Neha Sharma</h5>
+                        <p class="text-muted">Startup Strategist</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4" style="padding-top: 40px;">
+                    <div class="card text-center p-3">
+                        <h6 class="text-muted">Mentor</h6>
+                        <h5 class="font-weight-bold mt-2">Amit Raj</h5>
+                        <p class="text-muted">Tech Advisor</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4" style="padding-top: 40px;">
+                    <div class="card text-center p-3">
+                        <h6 class="text-muted">Mentor</h6>
+                        <h5 class="font-weight-bold mt-2">Sara Verma</h5>
+                        <p class="text-muted">Design Thinking Coach</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="impact">
+            <h2 style="color:black;font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Our Impact</h2>
+            <div class="impact-container">
+                <div class="impact-item">
+                    <div class="bar green" style="height: 200px;"></div>
+                    <div class="value">120+</div>
+                    <div class="label">Ideas</div>
+                </div>
+
+                <div class="impact-item">
+                    <div class="bar blue" style="height: 120px;"></div>
+                    <div class="value">45</div>
+                    <div class="label">Mentors</div>
+                </div>
+
+                <div class="impact-item">
+                    <div class="bar orange" style="height: 160px;"></div>
+                    <div class="value">18</div>
+                    <div class="label">Startups</div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="background-color:#13223F; color: white; padding: 50px 20px 20px 20px;">
+            <div class="container-fluid">
+                <div class="row">
+
+                    <div class="col-md-4 mb-4">
+                        <h5>Stratos</h5>
+                        <p style="color: #ccc;">Empowering visionaries to turn ideas into ventures. Join our innovation-driven community today!</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" style="color: #aaa; text-decoration: none;">Home</a></li>
+                            <li><a href="idea-incubation.html" style="color: #aaa; text-decoration: none;">Idea Incubation</a></li>
+                            <li><a href="#" style="color: #aaa; text-decoration: none;">Mentor Connect</a></li>
+                            <li><a href="funds.html" style="color: #aaa; text-decoration: none;">Investor Hub</a></li>
+                            <li><a href="join.html" style="color: #aaa; text-decoration: none;">Collab</a></li>
+                            <li><a href="news.html" style="color: #aaa; text-decoration: none;">Industry Insights</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <h5>Contact Us</h5>
+                        <p><i class="fas fa-envelope"></i> info@stratos.com</p>
+                        <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+
+                        <div style="margin-top: 10px;">
+                            <a href="#" style="color: #00aced; margin-right: 10px; font-size: 20px;"><i class="fab fa-twitter"></i></a>
+                            <a href="#" style="color: #3b5998; margin-right: 10px; font-size: 20px;"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" style="color: #e4405f; margin-right: 10px; font-size: 20px;"><i class="fab fa-instagram"></i></a>
+                            <a href="#" style="color: #0e76a8; font-size: 20px;"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="border-top: 1px solid #555;">
+
+                <div class="text-center" style="padding-top: 10px; font-size: 14px; color: #aaa;">
+                    &copy; 2025 Stratos. All Rights Reserved. | Designed with ❤ for Innovators
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // JavaScript for "Read More" toggle
+        document.querySelectorAll('.toggle-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const cardBody = this.closest('.card-body');
+                const shortText = cardBody.querySelector('.short');
+                const fullDescription = cardBody.querySelector('.full-description');
+
+                if (fullDescription.style.display === 'none' || fullDescription.style.display === '') {
+                    shortText.style.display = 'none';
+                    fullDescription.style.display = 'block';
+                    this.textContent = 'Read Less \u2190'; // Left arrow
+                } else {
+                    shortText.style.display = 'block';
+                    fullDescription.style.display = 'none';
+                    this.textContent = 'Read More \u2192'; // Right arrow
+                }
+            });
+        });
+
+        // Chart.js for Startup Funding Trends
+     // Chart.js for Startup Funding Trends
+ const ctx = document.getElementById('fundingChart').getContext('2d');
+   const fundingChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+    datasets: [{
+      label: 'Funding (in Millions)',
+      data: [150, 200, 250, 400, 350, 450],
+      backgroundColor: 'rgba(95, 99, 242, 0.2)',   // Soft fill (Indigo)
+      borderColor: '#5F63F2',                     // Bold line (Indigo)
+      borderWidth: 3,
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: '#F4B400',            // Highlight points (Yellow)
+      pointBorderColor: '#1C2D4A',                // Dark border for points
+      pointRadius: 5,
+      pointHoverRadius: 7
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: 'black'
+        }
+      },
+      title: {
+        display: true,
+        text: 'Startup Funding Over the Years',
+        color: 'black',
+        font: {
+          size: 18,
+          weight: 'bold'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: 'black'
+        },
+        grid: {
+          color: '#2F3A4B'
+        }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: 'black'
+        },
+        grid: {
+          color: '#2F3A4B'
+        }
+      }
+    }
+  }
+});
+
+    const impactCtx = document.getElementById('impactChart').getContext('2d');
+  const impactChart = new Chart(impactCtx, {
+  type: 'bar',
+  data: {
+    labels: ['2020', '2021', '2022', '2023', '2024'],
+    datasets: [{
+      label: 'Impact Score',
+      data: [50, 100, 150, 300, 450],
+      backgroundColor: [
+        '#FF6B57',  // Coral Red for 2020
+        '#1C2D4A',  // Dark Navy for 2021
+        '#F4B400',  // Gold/Yellow for 2022
+        '#3CB8B4',  // Teal for 2023
+        '#5F63F2'   // Indigo for 2024
+      ],
+      borderColor: [
+        '#CC5546',  // darker coral
+        '#0E1A30',  // darker navy
+        '#C29A00',  // darker yellow
+        '#2A8887',  // darker teal
+        '#4649C5'   // darker indigo
+      ],
+      borderWidth: 1.5
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#FFFFFF' // white legend text for dark backgrounds
+        }
+      },
+      title: {
+        display: true,
+        text: 'Startup Ecosystem Impact (2020–2024)',
+        color: '#FFFFFF',
+        font: {
+          size: 18,
+          weight: 'bold'
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: '#FFFFFF' // white axis labels
+        },
+        grid: {
+          color: '#374151' // subtle grid lines
+        }
+      },
+      x: {
+        ticks: {
+          color: '#FFFFFF'
+        },
+        grid: {
+          color: '#374151'
+        }
+      }
+    }
+  }
+});
+
+
+        // Dummy Login/Logout Logic
+     // Dummy Login/Logout Logic
+function updateAuthSection() {
+    const authSection = document.getElementById('authSection');
+    const isLoggedIn = localStorage.getItem('isLoggedIn'); // Example using localStorage
+
+    if (isLoggedIn === 'true') {
+        authSection.innerHTML = `
+            <span class="text-white mr-3">Welcome, User!</span>
+            <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+        `;
+        document.getElementById('taxServicesContainer').style.display = 'block'; // Show Tax Services
+    } else {
+        authSection.innerHTML = `
+            <a href="#" class="btn btn-outline-light mr-2">Log In</a>
+            <a href="#" class="btn btn-primary">Sign In &rarr;</a>
+        `;
+        document.getElementById('taxServicesContainer').style.display = 'none'; // Hide Tax Services
+    }
+}
+
+function login() {
+    localStorage.setItem('isLoggedIn', 'true');
+    updateAuthSection();
+    alert('Logged In!');
+}
+
+function logout() {
+    localStorage.removeItem('isLoggedIn');
+    updateAuthSection();
+    alert('Logged Out!');
+}
+
+// Initial call to set the auth section state
+updateAuthSection();
+
+// Attach login/signup functionalities to dummy buttons (if they exist)
+document.addEventListener('DOMContentLoaded', () => {
+    const loginBtn = document.querySelector('#authSection .btn-outline-light');
+    const signInBtn = document.querySelector('#authSection .btn-primary');
+
+    if (loginBtn) {
+        loginBtn.addEventListener('click', login);
+    }
+    // For Sign In, you might redirect or open a modal
+    if (signInBtn) {
+        signInBtn.addEventListener('click', () => {
+            alert('Redirecting to Sign In page or showing Sign Up form!');
+            // For demonstration, let's also log in
+            login();
+        });
+    }
+});
+    </script>
+    <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const loginLink = document.getElementById('loginLink');
+    const signupLink = document.getElementById('signupLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const taxServicesContainer = document.getElementById('taxServicesContainer'); // Already existing
+
+    // Get references to the new navigation items by their IDs
+    const ideaIncubationNavItem = document.getElementById('ideaIncubationNavItem');
+    const mentorConnectNavItem = document.getElementById('mentorConnectNavItem');
+    const investorHubNavItem = document.getElementById('investorHubNavItem');
+    const collabNavItem = document.getElementById('collabNavItem');
+    const industryInsightsNavItem = document.getElementById('industryInsightsNavItem');
+    const promoZoneNavItem = document.getElementById('promoZoneNavItem');
+
+
+    function updateAuthButtons() {
+        const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+
+        // --- Authentication Buttons (Login/Signup vs. Logout) ---
+        if (isLoggedIn) {
+            if (loginLink) loginLink.style.display = 'none';
+            if (signupLink) signupLink.style.display = 'none';
+            if (logoutBtn) logoutBtn.style.display = 'block';
+        } else {
+            if (loginLink) loginLink.style.display = 'block';
+            if (signupLink) signupLink.style.display = 'block';
+            if (logoutBtn) logoutBtn.style.display = 'none';
+        }
+
+        // --- Navigation Items Visibility ---
+        if (isLoggedIn) {
+            // Show protected nav items
+            if (ideaIncubationNavItem) ideaIncubationNavItem.style.display = 'block';
+            if (mentorConnectNavItem) mentorConnectNavItem.style.display = 'block';
+            if (investorHubNavItem) investorHubNavItem.style.display = 'block';
+            if (collabNavItem) collabNavItem.style.display = 'block';
+            if (industryInsightsNavItem) industryInsightsNavItem.style.display = 'block';
+            if (promoZoneNavItem) promoZoneNavItem.style.display = 'block';
+            if (taxServicesContainer) taxServicesContainer.style.display = 'block'; // Already handled, keep for consistency
+        } else {
+            // Hide protected nav items
+            if (ideaIncubationNavItem) ideaIncubationNavItem.style.display = 'none';
+            if (mentorConnectNavItem) mentorConnectNavItem.style.display = 'none';
+            if (investorHubNavItem) investorHubNavItem.style.display = 'none';
+            if (collabNavItem) collabNavItem.style.display = 'none';
+            if (industryInsightsNavItem) industryInsightsNavItem.style.display = 'none';
+            if (promoZoneNavItem) promoZoneNavItem.style.display = 'none';
+            if (taxServicesContainer) taxServicesContainer.style.display = 'none'; // Already handled, keep for consistency
+        }
+    }
+
+    // Add event listener for the logout button
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('user');
+            localStorage.removeItem('savedUser');
+
+            updateAuthButtons(); // Update UI immediately after logout
+            window.location.href = 'login.html'; // Redirect to login page
+        });
+    }
+
+    // Initial call to set the correct state of the buttons and nav items on page load
+    updateAuthButtons();
+
+    // Listen for changes in local storage from other tabs/windows (optional but good practice)
+    window.addEventListener('storage', updateAuthButtons);
+});
+    const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
+    const loginLink = document.getElementById("loginLink");
+    const signupLink = document.getElementById("signupLink");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (isLoggedIn) {
+      loginLink.style.display = "none";
+      signupLink.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    } else {
+      loginLink.style.display = "inline-block";
+      signupLink.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+    }
+
+    logoutBtn.addEventListener("click", async function () {
+      try {
+        const response = await fetch("http://localhost:3000/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include"
+        });
+        const data = await response.json();
+        if (data.success) {
+          localStorage.removeItem("userLoggedIn");
+          localStorage.removeItem("currentUser");
+          window.location.href = "login.html";
+        }
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    });
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        function updateAuthButtons() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true'; // Check your local storage flag
+            // Or use Firebase: const user = firebase.auth().currentUser;
+            // const isLoggedIn = !!user;
+
+            if (isLoggedIn) {
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+            } else {
+                loginBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        logoutBtn.addEventListener('click', function() {
+            // Clear local storage
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('user');
+            localStorage.removeItem('savedUser'); // Also remove saved credentials
+
+            // If using Firebase:
+            // firebase.auth().signOut().then(() => {
+            //     console.log('User signed out from Firebase');
+            // }).catch((error) => {
+            //     console.error('Error signing out:', error);
+            // });
+
+            // Update buttons immediately
+            updateAuthButtons();
+            // Redirect to login page or home
+            window.location.href = 'login.html'; 
+        });
+
+        // Call on page load
+        updateAuthButtons();
+
+        // Listen for changes in local storage (optional, for cross-tab sync)
+        window.addEventListener('storage', updateAuthButtons);
+    });
+</script>
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginLink = document.getElementById('loginLink');
+            const signupLink = document.getElementById('signupLink');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const taxServicesContainer = document.getElementById('taxServicesContainer');
+
+            function updateAuthButtons() {
+                // Use the 'userLoggedIn' flag set by your login page
+                const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+                // You can also check for user object if you store it:
+                // const user = JSON.parse(localStorage.getItem('user'));
+                // const isLoggedIn = user !== null;
+
+                if (isLoggedIn) {
+                    if (loginLink) loginLink.style.display = 'none';
+                    if (signupLink) signupLink.style.display = 'none';
+                    if (logoutBtn) logoutBtn.style.display = 'block';
+                    if (taxServicesContainer) taxServicesContainer.style.display = 'block'; // Show Tax Services
+                } else {
+                    if (loginLink) loginLink.style.display = 'block';
+                    if (signupLink) signupLink.style.display = 'block';
+                    if (logoutBtn) logoutBtn.style.display = 'none';
+                    if (taxServicesContainer) taxServicesContainer.style.display = 'none'; // Hide Tax Services
+                }
+            }
+
+            // Add event listener for the logout button
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default button behavior
+
+                    // Clear local storage items related to user session
+                    localStorage.removeItem('userLoggedIn');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('savedUser'); // Remove remembered credentials
+
+                    // If you have a backend logout endpoint (like your commented code suggested)
+                    // You might want to make a fetch request here:
+                    /*
+                    try {
+                        const response = await fetch("http://localhost:3000/logout", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            credentials: "include" // Important for sending cookies/session info
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            console.log("Logged out from backend.");
+                        } else {
+                            console.warn("Backend logout not successful:", data.message);
+                        }
+                    } catch (error) {
+                        console.error("Error during backend logout:", error);
+                    }
+                    */
+
+                    // Update the UI buttons
+                    updateAuthButtons();
+
+                    // Redirect to the login page
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // Initial call to set the correct state of the buttons when the page loads
+            updateAuthButtons();
+
+            // Listen for changes in local storage from other tabs/windows (optional but good practice)
+            window.addEventListener('storage', updateAuthButtons);
+        });
+    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginLink = document.getElementById('loginLink');
+        const signupLink = document.getElementById('signupLink');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Get references to all navigation items
+        const homeNavItem = document.getElementById('homeNavItem');
+        const ideaIncubationNavItem = document.getElementById('ideaIncubationNavItem');
+        const mentorConnectNavItem = document.getElementById('mentorConnectNavItem');
+        const investorHubNavItem = document.getElementById('investorHubNavItem');
+        const collabNavItem = document.getElementById('collabNavItem');
+        const industryInsightsNavItem = document.getElementById('industryInsightsNavItem');
+        const promoZoneNavItem = document.getElementById('promoZoneNavItem');
+        const taxServicesContainer = document.getElementById('taxServicesContainer');
+
+        // Collect all navigation items into an array to easily lock them all initially
+        // Note: homeNavItem is excluded here as its unlock logic is slightly different (always unlocked if logged in)
+        const allNavItemsToControl = [
+            ideaIncubationNavItem, mentorConnectNavItem,
+            investorHubNavItem, collabNavItem, industryInsightsNavItem,
+            promoZoneNavItem, taxServicesContainer
+        ].filter(item => item !== null); // Filter out any items that might not exist
+
+
+        function updateAuthButtons() {
+            let isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            let currentUserRole = null;
+
+            // Try to get the user object from local storage if logged in
+            if (isLoggedIn) {
+                const userString = localStorage.getItem('user');
+                if (userString) {
+                    try {
+                        const user = JSON.parse(userString);
+                        currentUserRole = user.role;
+                    } catch (e) {
+                        console.error("Error parsing user data from localStorage:", e);
+                        // If user data is corrupted, force logged out state
+                        localStorage.removeItem('userLoggedIn');
+                        localStorage.removeItem('user');
+                        isLoggedIn = false;
+                    }
+                }
+            }
+
+            // --- Authentication Buttons (Login/Signup vs. Logout) ---
+            if (isLoggedIn) {
+                if (loginLink) loginLink.style.display = 'none';
+                if (signupLink) signupLink.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'block';
+            } else {
+                if (loginLink) loginLink.style.display = 'block';
+                if (signupLink) signupLink.style.display = 'block';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+            }
+
+            // --- Navigation Items Visibility (Locked/Unlocked) based on Role ---
+
+            // Step 1: Default state - all controllable nav items are 'locked' initially
+            allNavItemsToControl.forEach(item => {
+                if (item) item.classList.add('locked-nav-item');
+            });
+
+            // Ensure Home is unlocked if logged in, locked otherwise
+            if (homeNavItem) {
+                if (isLoggedIn) {
+                    homeNavItem.classList.remove('locked-nav-item');
+                } else {
+                    homeNavItem.classList.add('locked-nav-item'); // Lock Home if not logged in
+                }
+            }
+
+
+            // Step 2: Unlock specific items based on login status and role
+            if (isLoggedIn) {
+                switch (currentUserRole) {
+                    case 'user':
+                        // 'user' role: Unlock ALL nav items
+                        allNavItemsToControl.forEach(item => {
+                            if (item) item.classList.remove('locked-nav-item');
+                        });
+                        break;
+                    case 'mentor':
+                        // Mentor role: Only Mentor Connect is unlocked (Home already handled)
+                        if (mentorConnectNavItem) mentorConnectNavItem.classList.remove('locked-nav-item');
+                        // All other items in allNavItemsToControl remain locked
+                        break;
+                    case 'investor':
+                        // Investor role: Only Investor Hub is unlocked (Home already handled)
+                        if (investorHubNavItem) investorHubNavItem.classList.remove('locked-nav-item');
+                        // All other items in allNavItemsToControl remain locked
+                        break;
+                    default:
+                        // For unhandled/unknown roles, only Home is unlocked, others remain locked.
+                        break;
+                }
+            } else {
+                // If NOT logged in, all items remain in their default 'locked' state (set at the beginning).
+            }
+        }
+
+        // Add event listener for the logout button
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('user');
+                localStorage.removeItem('savedUser');
+
+                updateAuthButtons(); // Update UI immediately after logout
+                window.location.href = 'login.html'; // Redirect to login page
+            });
+        }
+
+        // Initial call to set the correct state of the buttons and nav items on page load
+        updateAuthButtons();
+
+        // Listen for changes in local storage from other tabs/windows (optional but good practice)
+        window.addEventListener('storage', updateAuthButtons);
+    });
+</script>
+</body>
+</html>

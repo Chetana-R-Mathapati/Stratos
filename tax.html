@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Services - Stratos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 800px;
+        }
+
+        .section-title {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .calculate-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .calculate-btn:hover {
+            background: #0056b3;
+        }
+
+        .results-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .tax-breakdown {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .tax-bracket {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .summary-card {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .tip-icon {
+            color: #007bff;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .regime-selector {
+            margin-bottom: 20px;
+        }
+
+        .regime-selector label {
+            margin-right: 20px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+                margin: 0;
+                padding: 20px;
+            }
+
+            .calculator-card {
+                box-shadow: none;
+                border: none;
+                padding: 15px;
+                margin: 0;
+            }
+
+            .regime-selector,
+            .calculate-btn,
+            .input-group,
+            .no-print {
+                display: none !important;
+            }
+
+            .results-container {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+
+            .tax-breakdown, .summary-card {
+                border: 1px solid #ccc;
+                margin: 10px 0;
+                page-break-inside: avoid;
+                background: white !important;
+            }
+
+            .section-title {
+                color: black;
+                border-bottom-color: #ccc;
+            }
+
+            .tax-bracket {
+                border: 1px solid #ccc;
+                margin: 5px 0;
+                background: white !important;
+            }
+
+            .progress-bar {
+                display: none;
+            }
+
+            .tip-icon {
+                display: none;
+            }
+
+            .results-container::after {
+                content: "Generated on " attr(data-print-date);
+                display: block;
+                margin-top: 20px;
+                font-size: 12px;
+                text-align: center;
+                border-top: 1px solid #ccc;
+                padding-top: 10px;
+            }
+
+            button {
+                display: none !important;
+            }
+
+            * {
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="calculator-card">
+            <h2 class="section-title">Tax Calculator</h2>
+            
+            <div class="regime-selector">
+                <label>
+                    <input type="radio" name="regime" value="old" checked> Old Regime
+                </label>
+                <label>
+                    <input type="radio" name="regime" value="new"> New Regime
+                </label>
+            </div>
+
+            <div class="input-group">
+                <label>Annual Income <i class="fas fa-info-circle tip-icon" title="Enter your total annual income"></i></label>
+                <input type="number" id="income" placeholder="Enter amount in INR">
+            </div>
+
+            <div class="input-group">
+                <label>Investments (80C) <i class="fas fa-info-circle tip-icon" title="PPF, ELSS, Life Insurance Premium etc."></i></label>
+                <input type="number" id="investments" placeholder="Enter amount in INR">
+            </div>
+
+            <div class="input-group">
+                <label>House Rent Paid <i class="fas fa-info-circle tip-icon" title="Annual house rent paid"></i></label>
+                <input type="number" id="houseRent" placeholder="Enter amount in INR">
+            </div>
+
+            <button onclick="calculateTax()" class="calculate-btn">Calculate Tax</button>
+
+            <div id="result" class="results-container">
+                <!-- Results will be populated here -->
+            </div>
+
+            <div class="text-center mt-4 no-print">
+                <button onclick="printCalculation()" class="calculate-btn" style="width: auto; margin-top: 20px;">
+                    <i class="fas fa-print"></i> Print Tax Calculation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user has access
+        function checkAccess() {
+            if (!localStorage.getItem('userLoggedIn')) {
+                alert('Please log in to access Tax Services');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (!localStorage.getItem('investorAppointment')) {
+                alert('Unauthorized access. Please book an appointment in the Investor Hub first.');
+                window.location.href = 'funds.html';
+                return;
+            }
+        }
+
+        function calculateTax() {
+            const income = parseFloat(document.getElementById('income').value) || 0;
+            const investments = parseFloat(document.getElementById('investments').value) || 0;
+            const houseRent = parseFloat(document.getElementById('houseRent').value) || 0;
+            const regime = document.querySelector('input[name="regime"]:checked').value;
+
+            let taxableIncome = income;
+            let deductions = 0;
+            let tax = 0;
+
+            if (regime === 'old') {
+                // Calculate deductions for old regime
+                deductions = Math.min(investments, 150000) + Math.min(houseRent * 0.5, 100000);
+                taxableIncome -= deductions;
+            }
+
+            // Calculate tax based on regime
+            if (regime === 'old') {
+                if (taxableIncome <= 250000) tax = 0;
+                else if (taxableIncome <= 500000) tax = (taxableIncome - 250000) * 0.05;
+                else if (taxableIncome <= 1000000) tax = 12500 + (taxableIncome - 500000) * 0.2;
+                else tax = 112500 + (taxableIncome - 1000000) * 0.3;
+            } else {
+                if (taxableIncome <= 300000) tax = 0;
+                else if (taxableIncome <= 600000) tax = (taxableIncome - 300000) * 0.05;
+                else if (taxableIncome <= 900000) tax = 15000 + (taxableIncome - 600000) * 0.1;
+                else if (taxableIncome <= 1200000) tax = 45000 + (taxableIncome - 900000) * 0.15;
+                else if (taxableIncome <= 1500000) tax = 90000 + (taxableIncome - 1200000) * 0.2;
+                else tax = 150000 + (taxableIncome - 1500000) * 0.3;
+            }
+
+            // Add cess
+            const cess = tax * 0.04;
+            const totalTax = tax + cess;
+
+            // Display results
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="summary-card">
+                    <h4>Tax Summary</h4>
+                    <p>Gross Income: ₹${income.toLocaleString('en-IN')}</p>
+                    <p>Total Deductions: ₹${deductions.toLocaleString('en-IN')}</p>
+                    <p>Taxable Income: ₹${taxableIncome.toLocaleString('en-IN')}</p>
+                    <p>Tax Amount: ₹${tax.toLocaleString('en-IN')}</p>
+                    <p>Health & Education Cess: ₹${cess.toLocaleString('en-IN')}</p>
+                    <h5>Total Tax Payable: ₹${totalTax.toLocaleString('en-IN')}</h5>
+                </div>
+                <div class="tax-breakdown">
+                    <h4>Tax Breakdown</h4>
+                    ${getTaxBreakdown(regime, taxableIncome)}
+                </div>
+            `;
+        }
+
+        function getTaxBreakdown(regime, income) {
+            const brackets = regime === 'old' ? [
+                { limit: 250000, rate: 0 },
+                { limit: 500000, rate: 5 },
+                { limit: 1000000, rate: 20 },
+                { limit: Infinity, rate: 30 }
+            ] : [
+                { limit: 300000, rate: 0 },
+                { limit: 600000, rate: 5 },
+                { limit: 900000, rate: 10 },
+                { limit: 1200000, rate: 15 },
+                { limit: 1500000, rate: 20 },
+                { limit: Infinity, rate: 30 }
+            ];
+
+            let html = '';
+            let previousLimit = 0;
+
+            for (const bracket of brackets) {
+                const amount = Math.min(Math.max(income - previousLimit, 0), bracket.limit - previousLimit);
+                if (amount > 0) {
+                    html += `
+                        <div class="tax-bracket">
+                            <p>Income from ₹${previousLimit.toLocaleString('en-IN')} to ₹${bracket.limit === Infinity ? 'above' : bracket.limit.toLocaleString('en-IN')}</p>
+                            <p>Rate: ${bracket.rate}%</p>
+                            <p>Amount in this bracket: ₹${amount.toLocaleString('en-IN')}</p>
+                            <p>Tax on this bracket: ₹${(amount * bracket.rate / 100).toLocaleString('en-IN')}</p>
+                        </div>
+                    `;
+                }
+                previousLimit = bracket.limit;
+            }
+
+            return html;
+        }
+
+        function printCalculation() {
+            const resultDiv = document.getElementById('result');
+            
+            if (resultDiv.style.display === 'none') {
+                alert('Please calculate tax before printing');
+                return;
+            }
+
+            const currentDate = new Date().toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            resultDiv.setAttribute('data-print-date', currentDate);
+
+            window.print();
+        }
+
+        // Check access when page loads
+        document.addEventListener('DOMContentLoaded', checkAccess);
+    </script>
+</body>
+</html> 

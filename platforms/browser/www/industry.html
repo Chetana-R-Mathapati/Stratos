@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Startup News Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #d7c9ff, #f4e7ff);
+      margin: 0;
+      padding: 40px 20px;
+      color: #3c1053;
+    }
+
+    .news-container {
+      max-width: 800px;
+      margin: auto;
+      background: #f8f4ff;
+      border-radius: 24px;
+      padding: 40px 30px;
+      box-shadow: 0 12px 40px rgba(145, 69, 255, 0.2);
+    }
+
+    h2 {
+      font-size: 32px;
+      color: #3c1053;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p.description {
+      text-align: center;
+      color: #6b4c9a;
+      margin-bottom: 24px;
+    }
+
+    .select-wrapper {
+      position: relative;
+      width: 260px;
+      margin: 0 auto 30px;
+    }
+    .select-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      width: 12px; height: 12px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%239145ff' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-size: 12px;
+      background-repeat: no-repeat;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+    .select-wrapper.open::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    #category-select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 100%;
+      padding: 12px 18px;
+      border: 2px solid #9145ff;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #fff;
+      color: #3c1053;
+      box-shadow: 0 4px 16px rgba(145, 69, 255, 0.25);
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #category-select:focus {
+      outline: none;
+      border-color: #6c2bd9;
+      box-shadow: 0 0 0 3px rgba(145, 69, 255, 0.3);
+    }
+
+    select option {
+      color: #9145ff;
+      background-color: #f8f4ff;
+      font-weight: 500;
+    }
+
+    select option:checked {
+      background-color: #9145ff;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .news-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 16px rgba(145, 69, 255, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .news-card h3 {
+      font-size: 18px;
+      color: #3c1053;
+      margin-bottom: 6px;
+    }
+
+    .news-card p {
+      color: #6b4c9a;
+      margin-bottom: 8px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    a {
+      color: #9145ff;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      background-color: transparent;
+      color: #9145ff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      text-decoration: underline;
+    }
+
+    .controls {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .controls button {
+      margin: 0 8px;
+      background-color: #9145ff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .controls button:hover {
+      background-color: #6c2bd9;
+    }
+  </style>
+</head>
+<body>
+  <div class="news-container">
+    <h2>Latest in <span id="category-title">Tech</span></h2>
+    <p class="description">Curated startup news from each sector</p>
+
+    <div class="select-wrapper">
+      <select id="category-select">
+        <option value="">-- Choose an option --</option>
+        <option value="IT">IT</option>
+        <option value="ENTERPRISE_TECH">ENTERPRISE_TECH</option>
+        <option value="Health">HEALTH</option>
+        <option value="Finance">FINANCE</option>
+        <option value="Retail">RETAIL</option>
+        <option value="Other">OTHER</option>
+      </select>
+    </div>
+
+    <div class="controls">
+      <button onclick="showSavedArticles()">View Saved Articles</button>
+      <button onclick="clearSavedArticles()">Clear Saved</button>
+    </div>
+
+    <div id="news-list"></div>
+  </div>
+
+  <script>
+    const newsData = {
+      IT: [
+        {
+          title: "Jio Platforms Partners Confluent To Fuel GenAI Use Cases In India",
+          snippet: "Jio Platforms Limited has partnered with California-based data streaming company Confluent to….",
+          link: "https://inc42.com/buzz/jio-platforms-partners-confluent-to-fuel-genai-use-cases-in-india/"
+        },
+        {
+          title: "ideaForge Shares Near Lower Circuit, Set Fresh 52-Week Mark",
+          snippet: "Shares of ideaForge slumped as much as 19.09% to record its fresh…",
+          link: "https://inc42.com/buzz/ideaforge-shares-nears-lower-circuit-sets-fresh-52-week-mark/"
+        },
+        {
+          title: "Jio Platforms’ Q3 Profit Surges 26% YoY To INR 6,861 Cr",
+          snippet: "Reliance Industries Ltd’s (RIL’s) digital arm Jio Platforms posted a 26% increase…",
+          link: "https://inc42.com/buzz/jio-platforms-q3-profit-surges-26-yoy-to-inr-6861-cr/"
+        }
+      ],
+      ENTERPRISE_TECH: [
+        {
+          title: "Tracxn Slips Into The Red In Q4, Posts INR 7.6 Cr Loss",
+          snippet: "In the preceding December quarter, the company had reported a similar profit of INR 1.4 Cr",
+          link: "https://inc42.com/buzz/tracxn-slips-into-the-red-in-q4-posts-inr-7-6-cr-loss/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=2"
+        },
+        {
+          title: "Data Sutram Bags $9 Mn To Offer Fraud Detection Services To BFSI Sector",
+          snippet: "BFSI-focussed B2B SaaS startup Data SutramData Sutram Datalabs_in-article-icon has raised a Series A funding of $9 Mn (around INR 77 Cr) …",
+          link: "https://inc42.com/buzz/data-sutram-bags-9-mn-to-offer-fraud-detection-services-to-bfsi-sector/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=4"
+        },
+        {
+          title: "Microsoft-Backed Builder.ai To File For Bankruptcy",
+          snippet: "Weeks after Builder.AiBuilder.Ai Datalabs_in-article-icon admitted “problems” under its past leadership…",
+          link: "https://inc42.com/buzz/microsoft-backed-builder-ai-to-file-for-bankruptcy/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=5"
+        }
+      ],
+      
+      Health: [
+        {
+          title: "India’s Ozempic, Mounjaro Era: Healthify Leads The Weight Loss Shift",
+          snippet: "The startup, which raised $20 Mn late last year, has launched HealthifyRx, a companion programme built around the anti-obesity",
+          link: "https://inc42.com/features/ozempic-mounjaro-india-healthify-weight-loss-shift/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=1"
+        },
+        {
+          title: "Patent Infringement Case: Finland’s Oura Scores Initial Victory Against Ultrahuman",
+          snippet: "Finland-based smart ring company Oura has won a preliminary legal victory against...",
+          link: "https://inc42.com/buzz/patent-infringement-case-finlands-oura-scores-initial-victory-against-ultrahuman/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=6"
+        },
+        {
+          title: "CureBay Raises $21 Mn To Improve Healthcare Access In Rural India",
+          snippet: "Led by Orios Venture Partners and 3one4 Capital, the round also saw participation from Enzia Ventures, ITI Growth Opportunities Fund, ",
+          link: "https://inc42.com/buzz/hexahealth-to-raise-inr-37-cr-via-preferential-issue/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=8"
+        }
+      ],
+      Finance: [
+        {
+          title: "Stable Money To Raise INR 173 Cr In Fresh Funding Round",
+          snippet: "Bengaluru-based fintech startup Stable MoneyStable Money Datalabs_in-article-icon is set to raise INR 173 Cr ($20 Mn) in a fresh funding ...",
+          link: "https://inc42.com/buzz/stable-money-to-raise-inr-173-cr-in-fresh-funding-round/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=3"
+        },
+        {
+          title: "MobiKwik Q4: Loss Surges 83.5X YoY To INR 56 Cr",
+          snippet: "Fintech major MobiKwikMobiKwik Datalabs_in-article-icon saw its net loss zoom 83.5X to INR 56.03 Cr in Q4 FY25 ...",
+          link: "https://inc42.com/buzz/mobikwik-q4-loss-surges-83-5x-yoy-to-inr-56-cr/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=8"
+        },
+        {
+          title: "Exclusive: Oxyzo Raises INR 533 Cr Debt From Neo Group, Others",
+          snippet: "New fintech gives freelancers instant access to credit.",
+          link: "https://www.cnbc.com/lendly-launch"
+        }
+      ],
+      Education: [
+        {
+          title: "Vedantu Achieves Profitability In Q4 FY25: CEO Vamsi Krishna ",
+          snippet: "Edtech startup VedantuVedantu Datalabs_in-article-icon achieved profitability in the March quarter of the fiscal year 2024-25 (Q4 FY25)...",
+          link: "https://inc42.com/buzz/vedantu-achieves-profitability-in-q4-fy25-ceo-vamsi-krishna/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=6"
+         },
+        {
+          title: "BYJU’S Cofounders Allege Threats & Pressure Tactics",
+          snippet: "The cofounders of troubled edtech startup BYJU’SBYJU’S Datalabs_in-article-icon, Byju Raveendran and Divya Gokulnath...",
+          link: "https://inc42.com/buzz/byjus-cofounders-allege-threats-pressure-tactics/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=5"
+        },
+        {
+          title: "Edtech Startup CENTA Bags INR 20 Cr From Colossa Ventures, Others",
+          snippet: "dtech startup Centre for Teacher Accreditation (CentaCenta Datalabs_in-article-icon) has raised INR 20 Cr...",
+          link: "https://inc42.com/buzz/edtech-startup-centa-bags-inr-20-cr-from-colossa-ventures-others/?itm_medium=website&itm_source=dl-industry-profile&itm_campaign=stories-tab&itm_content=article&itm_term=13"
+        }
+      ],
+      Retail: [
+        {
+          title: "Bira 91 Maker Plans To Go Public In 2026",
+          snippet: "B9 Beverages Ltd, which owns craft beer brand Bira 91, is reportedly….",
+          link: "https://inc42.com/buzz/bira91-maker-plans-to-go-public-in-2026/"
+        },
+        {
+          title: "iPhones Pushed Over 35% Surge In India’s Mobile Phone Exports In FY24",
+          snippet: "iPhones pushed over 35% surge in India’s mobile phone exports to a….",
+          link: "https://inc42.com/buzz/iphones-pushed-over-35-surge-in-indias-mobile-phone-exports-in-fy24/"
+        },
+        {
+          title: "Kashmir Bat Makers Look To Sue Over Shark Tank India Claims; Seek INR ...",
+          snippet: "Kashmir-based cricket bat manufacturer Alfa Sports & Co has sought INR 500….",
+          link: "https://inc42.com/buzz/kashmir-bat-makers-look-to-sue-over-shark-tank-india-claims-seek-inr-500-cr-in-damages/"
+        }
+      ],
+    
+
+    Other: [
+        {
+          title: " Latest Indian Tech & Startup News, Analysis & Stories",
+          snippet: "Inc42 covers the latest news, trends and insights on Indian tech and startup ecosystem….",
+          link: "https://r.search.yahoo.com/_ylt=AwrKB7oCmDRoOAIAD6i7HAx.;_ylu=Y29sbwNzZzMEcG9zAzEEdnRpZAMEc2VjA3Ny/RV=2/RE=1749486850/RO=10/RU=https%3a%2f%2finc42.com%2f/RK=2/RS=IznbkytP4S36egIr12GpL3OE_9I-"
+        },
+        {
+          title: "economictimes.indiatimes.com › tech › startupsStartups News: Latest Startups News Today, Top Indian ...",
+          snippet: "Read the latest news on startups in India and abroad, including funding, acquisitions, regulations, and trends..",
+          link: "https://r.search.yahoo.com/_ylt=AwrKB7oCmDRoOAIAEKi7HAx.;_ylu=Y29sbwNzZzMEcG9zAzIEdnRpZAMEc2VjA3Ny/RV=2/RE=1749486850/RO=10/RU=https%3a%2f%2feconomictimes.indiatimes.com%2ftech%2fstartups/RK=2/RS=hP4jEuHoXw3EbreIusm9gJKBahY-"
+        },
+        {
+          title: "IndianStartupNews - Latest News & Stories From Indian ... ",
+          snippet: " ISN is your go-to source for everything startups in India. News, funding, trends & stories….",
+          link: "https://r.search.yahoo.com/_ylt=AwrKB7oCmDRoOAIAEai7HAx.;_ylu=Y29sbwNzZzMEcG9zAzMEdnRpZAMEc2VjA3Ny/RV=2/RE=1749486850/RO=10/RU=https%3a%2f%2findianstartupnews.com%2f/RK=2/RS=PSZ.EZQx5Iyimsn2w3xGDrxCmpY-s"
+        }
+      ]
+      };
+
+  const categorySelect = document.getElementById("category-select");
+  const newsList = document.getElementById("news-list");
+  const categoryTitle = document.getElementById("category-title");
+
+  categorySelect.addEventListener("change", () => {
+    const category = categorySelect.value;
+    categoryTitle.textContent = category || "Tech";
+    renderNews(category);
+  });
+
+  function renderNews(category) {
+    newsList.innerHTML = "";
+    if (!category || !newsData[category]) return;
+
+    newsData[category].forEach(article => {
+      const card = document.createElement("div");
+      card.className = "news-card";
+      card.innerHTML = `
+        <h3>${article.title}</h3>
+        <p>${article.snippet}</p>
+        <div class="card-footer">
+          <a href="${article.link}" target="_blank">Read more</a>
+          <button onclick="saveArticle('${category}', '${article.link}')">Save</button>
+        </div>
+      `;
+      newsList.appendChild(card);
+    });
+  }
+
+  function saveArticle(category, link) {
+    const saved = JSON.parse(localStorage.getItem("savedArticles") || "[]");
+    const article = newsData[category].find(a => a.link === link);
+    if (article && !saved.some(a => a.link === link)) {
+      saved.push(article);
+      localStorage.setItem("savedArticles", JSON.stringify(saved));
+      alert("Article saved!");
+    }
+  }
+
+  function showSavedArticles() {
+    const saved = JSON.parse(localStorage.getItem("savedArticles") || "[]");
+    newsList.innerHTML = "";
+    if (!saved.length) {
+      newsList.innerHTML = "<p>No saved articles yet.</p>";
+      return;
+    }
+
+    saved.forEach(article => {
+      const card = document.createElement("div");
+      card.className = "news-card";
+      card.innerHTML = `
+        <h3>${article.title}</h3>
+        <p>${article.snippet}</p>
+        <div class="card-footer">
+          <a href="${article.link}" target="_blank">Read more</a>
+        </div>
+      `;
+      newsList.appendChild(card);
+    });
+    categoryTitle.textContent = "Saved";
+  }
+
+  function clearSavedArticles() {
+    localStorage.removeItem("savedArticles");
+    alert("Saved articles cleared.");
+    newsList.innerHTML = "";
+    categoryTitle.textContent = "Tech";
+  }
+
+
+
+  </script>
+</body>
+</html>

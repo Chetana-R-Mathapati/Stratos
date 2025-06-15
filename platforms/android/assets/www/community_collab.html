@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community & Collaboration</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2c3e50; /* Darker background */
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: #34495e; /* Darker blue-grey */
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom-left-radius: 50% 20px;
+            border-bottom-right-radius: 50% 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #ecf0f1;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-style: italic;
+            color: #bdc3c7;
+        }
+
+        .join-btn {
+            padding: 15px 35px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #16a085; /* Greenish blue */
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .join-btn i {
+            margin-right: 10px;
+        }
+
+        .join-btn:hover {
+            background-color: #138d75;
+            transform: scale(1.1);
+        }
+
+        .skills, .features, .live-feed {
+            margin: 50px 20px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .skills h2, .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .skills-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .skill-card {
+            background: #fff;
+            border: 2px solid #3498db;
+            padding: 30px;
+            border-radius: 15px;
+            width: 200px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .skill-card p {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .skill-card i {
+            font-size: 3rem;
+            color: #16a085;
+        }
+
+        .features {
+            background: #2d3436;
+            color: #fff;
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Styling the feature cards container */
+        .feature-card-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        /* Feature card style */
+        .feature-card {
+            background: #16a085;
+            padding: 20px;
+            border-radius: 15px;
+            width: 250px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        /* Hover effect for feature card */
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #fff;
+        }
+
+        .feature-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #fff;
+        }
+
+        .feature-detail {
+            display: none;
+            font-size: 1.2rem;
+            color: #ecf0f1;
+            margin-top: 15px;
+        }
+
+        /* Active state for the feature details */
+        .feature-card.active .feature-detail {
+            display: block;
+        }
+
+        /* Transition effect for when the card is active */
+        .feature-card.active {
+            background: #1abc9c;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .live-feed {
+            background: #f5f5f5;
+            color: #333;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .live-feed .live-logo {
+            font-size: 4rem;
+            color: #e74c3c;
+            transition: 0.3s;
+        }
+
+        .live-feed p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #16a085;
+        }
+
+        footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .buttons button {
+            padding: 12px 25px;
+            font-size: 16px;
+            color: white;
+            background-color: #3498db;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 0 10px;
+        }
+
+        .buttons button:hover {
+            background-color: #2c80b4;
+            transform: scale(1.1);
+        }
+
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <h1>🌟 Welcome to Your Tribe!</h1>
+        <p>Connect, Collaborate, and Create Something Amazing</p>
+        <button class="join-btn"><i class="fas fa-users"></i>Join the Community</button>
+    </section>
+
+    <section class="skills">
+        <h2>Select Your Skill Set:</h2>
+    <div class="skills-container">
+    <a href="tech.html" style="text-decoration: none;">
+        <div class="skill-card"><i class="fas fa-laptop-code"></i><p>Tech</p></div>
+    </a>
+    <a href="marketing.html" style="text-decoration: none;">
+        <div class="skill-card"><i class="fas fa-bullhorn"></i><p>Marketing</p></div>
+    </a>
+    <a href="finance.html" style="text-decoration: none;">
+        <div class="skill-card"><i class="fas fa-chart-line"></i><p>Finance</p></div>
+    </a>
+    <a href="design.html" style="text-decoration: none;">
+        <div class="skill-card"><i class="fas fa-paint-brush"></i><p>Design</p></div>
+    </a>
+    <a href="operations.html" style="text-decoration: none;">
+        <div class="skill-card"><i class="fas fa-cogs"></i><p>Operations</p></div>
+    </a>
+    <a href="collaboration.html" style="text-decoration: none;">
+        <div class="skill-card"><i class="fas fa-handshake"></i><p>Collaboration</p></div>
+    </a>
+</div>
+
+
+    </section>
+
+    <section class="features">
+        <h2>Community Features:</h2>
+        <div class="feature-card-container">
+            <div class="feature-card" onclick="toggleDetail(this)">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <p class="feature-title">Join Discussion Groups</p>
+                <div class="feature-detail">
+                    <p>Engage in real-time discussions and share ideas with community members.</p>
+                </div>
+            </div>
+            <div class="feature-card" onclick="toggleDetail(this)">
+                <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                <p class="feature-title">Access Events</p>
+                <div class="feature-detail">
+                    <p>Stay up-to-date with the latest membership and startup events happening within the community.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="live-feed">
+        <h2>Last Live</h2>
+        <div class="live-logo"><i class="fas fa-broadcast-tower"></i></div>
+        <p>📡 5 minutes ago</p>
+    </section>
+
+    <footer>
+        <div class="buttons">
+            <button>Back</button>
+            <button>Next</button>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle the feature detail display when clicked
+        function toggleDetail(card) {
+            card.classList.toggle('active');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stratos Mentor Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #fef0f3;
+      color: #12263a;
+    }
+    header {
+      background-color: #7bb4d3;
+      color: #f2edf3;
+      padding: 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 2rem 1rem;
+    }
+    .filter-container {
+      background: linear-gradient(to right, #b6c1d6, #d2d9e8);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-container label {
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: #2b3c53;
+    }
+    #domain-filter {
+      padding: 0.6rem 1rem;
+      border-radius: 0.75rem;
+      border: none;
+      background: #e0e7f1;
+      font-size: 1rem;
+      color: #1a1f2e;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    #domain-filter:hover {
+      background: #d1dbe8;
+    }
+    .mentors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .mentor-card {
+      background: #ffe5ec;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .mentor-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+    .email-link {
+      font-size: 0.9rem;
+      color: #2c87aa;
+      text-decoration: none;
+      display: block;
+      margin-top: 0.4rem;
+    }
+    .connect-btn {
+      margin-top: 1rem;
+      background: #4ba3c3;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    .connect-btn:hover {
+      background: #2c87aa;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .submit-btn {
+      background: #4ba3c3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background: #2c87aa;
+    }
+
+    .mentor-profile {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .profile-image {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #4ba3c3;
+    }
+
+    .profile-info h2 {
+      margin: 0;
+      color: #12263a;
+    }
+
+    .profile-info p {
+      margin: 0.5rem 0;
+      color: #666;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+
+    .stat-card h3 {
+      margin: 0;
+      color: #4ba3c3;
+    }
+
+    .edit-profile-btn {
+      background: #4ba3c3;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .edit-profile-btn:hover {
+      background: #2c87aa;
+    }
+
+    #editProfileModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .edit-modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .save-profile-btn {
+      background: #4ba3c3;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .save-profile-btn:hover {
+      background: #2c87aa;
+    }
+  </style>
+  <script src="https://smtpjs.com/v3/smtp.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Stratos Mentor Hub</h1>
+    <p>Share your expertise, guide the next generation</p>
+  </header>
+
+  <div class="container">
+    <div id="mentorProfile" class="mentor-profile">
+      <!-- Profile content will be loaded here -->
+    </div>
+
+    <button class="edit-profile-btn" onclick="showEditProfile()">
+      <i class="fas fa-edit"></i> Edit Profile
+    </button>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal">
+    <div class="edit-modal-content">
+      <h2>Edit Profile</h2>
+      <form id="editProfileForm">
+        <div class="form-group">
+          <label for="profileImage">Profile Image URL</label>
+          <input type="text" id="profileImage" name="profileImage">
+        </div>
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="domain">Domain</label>
+          <select id="domain" name="domain" required>
+            <option value="Finance">Finance</option>
+            <option value="Tech">Tech</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Wellness">Wellness</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Operations">Operations</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expertise">Areas of Expertise</label>
+          <textarea id="expertise" name="expertise" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="experience">Years of Experience</label>
+          <input type="number" id="experience" name="experience" required min="0">
+        </div>
+        <button type="submit" class="save-profile-btn">Save Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="filter-container">
+    <label for="domain-filter">🔍 Filter by Domain:</label>
+    <select id="domain-filter">
+      <option value="All">All Domains</option>
+      <option value="Finance">💰 Finance</option>
+      <option value="Tech">💻 Tech</option>
+      <option value="Healthcare">🩺 Healthcare</option>
+      <option value="Wellness">🌿 Wellness</option>
+    </select>
+  </div>
+
+  <main class="container">
+    <h2>Meet Our Investors</h2>
+    <div class="mentors" id="investor-list"></div>
+    <div id="new-mentor"></div>
+  </main>
+
+  <script>
+    const investors = [
+     
+    
+  {
+    name: "Nandan Nilekani",
+    domain: "Tech",
+    sector: "Tech, FinTech",
+    email: "nandan@gmail.com",
+    image: "https://th.bing.com/th/id/OIP.yVos6niUDviWeFBzCtsNaAHaEo",
+    bio: "Co-founder of Infosys, Nilekani has backed several Indian fintech and digital ID ventures."
+  },
+  {
+    name: "Sanjiv Bajaj",
+    domain: "Finance",
+    sector: "Finance, Insurance",
+    email: "bhatsanjana2004@gmail.com",
+    image: "https://th.bing.com/th/id/OIP._k2ocN7WeHBPGmdG4beZ2QHaEK",
+    bio: "Managing Director of Bajaj Finserv and known for investing in finance and insurance innovation."
+  },
+
+  {
+    name: "Sasha Mirchandani",
+    domain: "Wellness",
+    sector: "Technology, Consumer",
+    email: "sasha.mirchandani@gmail.com",
+    image: "https://tse4.mm.bing.net/th?id=OIP.E1-PT2flxl9_uYzHf1SXSgAAAA&pid=Api&P=0&h=180",
+    bio: "Founder of Kae Capital, known for early-stage investments in tech startups."
+  },
+  {
+    name: "Padmasree Warrior",
+    domain: "Tech",
+    sector: "Technology, Leadership",
+    email: "padmasree.warrior@gmail.com",
+    image: "https://media.licdn.com/dms/image/v2/C5603AQG6X9VVJbDq8A/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1548022109732?e=2147483647&v=beta&t=mlRCVN2uKkCqsANKGsWURHu-RqPvK0mcucIOtbnLrrE",
+    bio: "Former CTO of Cisco, active angel investor in deep tech startups."
+  }
+
+    ];
+
+    const investorList = document.getElementById('investor-list');
+    const domainFilter = document.getElementById('domain-filter');
+    const newMentorDiv = document.getElementById('new-mentor');
+
+    function createInvestorCard(investor) {
+      const card = document.createElement('div');
+      card.className = 'mentor-card';
+      card.innerHTML = `
+        <img src="${investor.image}" alt="${investor.name}" />
+        <h3>${investor.name}</h3>
+        <p><strong>Domain:</strong> ${investor.domain}</p>
+        <p>${investor.bio}</p>
+        <a href="mailto:${investor.email}" class="email-link">${investor.email}</a>
+        <button class="connect-btn" onclick="openConnectionModal('${investor.name}', '${investor.email}')">Connect</button>
+      `;
+      return card;
+    }
+
+    // Get modal elements
+    const modal = document.getElementById('connectionModal');
+    const closeBtn = document.querySelector('.close');
+    const mentorNameSpan = document.getElementById('mentorName');
+    const mentorEmailInput = document.getElementById('mentorEmail');
+    const connectionForm = document.getElementById('connectionForm');
+
+    // Open modal function
+    function openConnectionModal(mentorName, mentorEmail) {
+      modal.style.display = "block";
+      mentorNameSpan.textContent = mentorName;
+      mentorEmailInput.value = mentorEmail;
+      
+      // Set min date to today
+      const today = new Date();
+      const dateInput = document.getElementById('appointmentDate');
+      dateInput.min = today.toISOString().slice(0, 16);
+    }
+
+    // Close modal when clicking (x)
+    closeBtn.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    // Handle form submission
+    connectionForm.onsubmit = async function(e) {
+      e.preventDefault();
+      
+      const connectBtn = document.querySelector('.connect-btn');
+      connectBtn.disabled = true;
+      connectBtn.textContent = 'Sending...';
+
+      const userName = document.getElementById('userName').value;
+      const userEmail = document.getElementById('userEmail').value;
+      const appointmentDate = new Date(document.getElementById('appointmentDate').value).toLocaleString();
+      const message = document.getElementById('message').value;
+      const mentorEmail = mentorEmailInput.value;
+
+      const emailBody = `
+        New Connection Request Details:
+        
+        From: ${userName}
+        Email: ${userEmail}
+        Preferred Appointment Date: ${appointmentDate}
+        Message: ${message}
+        
+        This is a connection request sent through the Stratos Mentor Hub.
+      `;
+
+      try {
+        Email.send({
+            Host : "smtp.elasticemail.com",
+            Username : "YOUR_USERNAME", // Your Elastic Email username
+            Password : "YOUR_PASSWORD", // Your Elastic Email password
+            To : mentorEmail,
+            From : "YOUR_VERIFIED_SENDER_EMAIL", // Your verified sender email from Elastic Email
+            Subject : `Connection Request from ${userName}`,
+            Body : emailBody
+        }).then(function (message) {
+          if(message === "OK") {
+            // Show success message
+            const successMessage = document.createElement('div');
+            successMessage.style.backgroundColor = '#4CAF50';
+            successMessage.style.color = 'white';
+            successMessage.style.padding = '10px';
+            successMessage.style.borderRadius = '4px';
+            successMessage.style.marginTop = '10px';
+            successMessage.textContent = `Request sent successfully to ${mentorNameSpan.textContent}! They will receive your details at ${mentorEmail}`;
+            
+            connectionForm.appendChild(successMessage);
+            
+            // Reset form after 2 seconds
+            setTimeout(() => {
+              modal.style.display = "none";
+              connectionForm.reset();
+              successMessage.remove();
+              connectBtn.disabled = false;
+              connectBtn.textContent = 'Connect';
+            }, 2000);
+          } else {
+            throw new Error("Failed to send email");
+          }
+        });
+      } catch (error) {
+        alert("Error sending request. Please try again.");
+        console.error("Error:", error);
+        connectBtn.disabled = false;
+        connectBtn.textContent = 'Connect';
+      }
+    }
+
+    function displayInvestors(filter = 'All') {
+      investorList.innerHTML = '';
+      
+      // Combine static investors with mentors from localStorage
+      let allInvestors = [...investors];
+      const storedMentors = JSON.parse(localStorage.getItem('mentors') || '[]');
+      allInvestors = allInvestors.concat(storedMentors);
+      
+      const filtered = filter === 'All' ? allInvestors : allInvestors.filter(i => i.domain === filter);
+      filtered.forEach(investor => investorList.appendChild(createInvestorCard(investor)));
+    }
+    
+    domainFilter.addEventListener('change', e => displayInvestors(e.target.value));
+    
+    // Initial display
+    displayInvestors();
+    
+    // Add event listener to window storage event to update the display when localStorage changes
+    window.addEventListener('storage', () => {
+      displayInvestors(domainFilter.value);
+    });
+
+    // Check if user is logged in and is a mentor
+    document.addEventListener('DOMContentLoaded', function() {
+      const userLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+
+      if (!userLoggedIn || userData.role !== 'mentor') {
+        window.location.replace('login.html');
+        return;
+      }
+
+      // Load mentor profile
+      loadMentorProfile();
+    });
+
+    function loadMentorProfile() {
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const mentorData = JSON.parse(localStorage.getItem('mentorProfile_' + userData.username) || '{}');
+
+      const profileHtml = `
+        <div class="profile-header">
+          <img src="${mentorData.profileImage || 'https://via.placeholder.com/150'}" alt="Profile" class="profile-image">
+          <div class="profile-info">
+            <h2>${mentorData.name || userData.username}</h2>
+            <p><i class="fas fa-envelope"></i> ${mentorData.email || userData.email}</p>
+            <p><i class="fas fa-briefcase"></i> ${mentorData.domain || 'Domain not set'}</p>
+            <p><i class="fas fa-star"></i> ${mentorData.experience || '0'} years of experience</p>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-card">
+            <h3>20+</h3>
+            <p>Mentees Guided</p>
+          </div>
+          <div class="stat-card">
+            <h3>15</h3>
+            <p>Active Sessions</p>
+          </div>
+          <div class="stat-card">
+            <h3>4.9/5</h3>
+            <p>Rating</p>
+          </div>
+        </div>
+        <div class="expertise-section">
+          <h3>Areas of Expertise</h3>
+          <p>${mentorData.expertise || 'No expertise listed yet'}</p>
+        </div>
+      `;
+
+      document.getElementById('mentorProfile').innerHTML = profileHtml;
+    }
+
+    function showEditProfile() {
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const mentorData = JSON.parse(localStorage.getItem('mentorProfile_' + userData.username) || '{}');
+
+      // Populate form with existing data
+      document.getElementById('profileImage').value = mentorData.profileImage || '';
+      document.getElementById('name').value = mentorData.name || userData.username;
+      document.getElementById('email').value = mentorData.email || userData.email;
+      document.getElementById('domain').value = mentorData.domain || '';
+      document.getElementById('expertise').value = mentorData.expertise || '';
+      document.getElementById('experience').value = mentorData.experience || '';
+
+      document.getElementById('editProfileModal').style.display = 'block';
+    }
+
+    // Handle form submission
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const mentorData = {
+        profileImage: document.getElementById('profileImage').value,
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        domain: document.getElementById('domain').value,
+        expertise: document.getElementById('expertise').value,
+        experience: document.getElementById('experience').value
+      };
+
+      // Save mentor profile
+      localStorage.setItem('mentorProfile_' + userData.username, JSON.stringify(mentorData));
+
+      // Add mentor to investors list
+      const mentorInvestor = {
+        name: mentorData.name,
+        domain: mentorData.domain,
+        sector: mentorData.expertise,
+        email: mentorData.email,
+        image: mentorData.profileImage || 'https://via.placeholder.com/150',
+        bio: `${mentorData.name} is a mentor with ${mentorData.experience} years of experience in ${mentorData.domain}.`
+      };
+
+      // Get existing stored mentors
+      let storedMentors = JSON.parse(localStorage.getItem('mentors') || '[]');
+      
+      // Check if mentor already exists
+      const existingMentorIndex = storedMentors.findIndex(m => m.email === mentorData.email);
+      if (existingMentorIndex !== -1) {
+        // Update existing mentor
+        storedMentors[existingMentorIndex] = mentorInvestor;
+      } else {
+        // Add new mentor
+        storedMentors.push(mentorInvestor);
+      }
+
+      // Save updated mentors list
+      localStorage.setItem('mentors', JSON.stringify(storedMentors));
+
+      // Update display
+      loadMentorProfile();
+      displayInvestors(domainFilter.value);
+
+      // Close modal
+      document.getElementById('editProfileModal').style.display = 'none';
+
+      // Show success message
+      const successMessage = document.createElement('div');
+      successMessage.style.backgroundColor = '#4CAF50';
+      successMessage.style.color = 'white';
+      successMessage.style.padding = '10px';
+      successMessage.style.borderRadius = '4px';
+      successMessage.style.marginTop = '10px';
+      successMessage.style.position = 'fixed';
+      successMessage.style.top = '20px';
+      successMessage.style.right = '20px';
+      successMessage.style.zIndex = '1000';
+      successMessage.textContent = 'Profile updated successfully!';
+      document.body.appendChild(successMessage);
+
+      // Remove success message after 3 seconds
+      setTimeout(() => {
+        successMessage.remove();
+      }, 3000);
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('editProfileModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
