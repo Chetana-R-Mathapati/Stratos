@@ -105,21 +105,17 @@
       investorGrid.innerHTML = ''; // Clear existing content before populating
       console.log("Cleared investor grid");
 
-      // Set up real-time listener for investors collection
-      const investorsRef = collection(db, "investors");
-      onSnapshot(investorsRef, (snapshot) => {
-          console.log("Real-time update received");
+      // Fetch all investors once (instead of real-time listener for debugging permissions)
+      getDocs(collection(db, "investors")).then((querySnapshot) => {
+          console.log("Fetched investor data (one-time).");
           
-          // Clear the grid on each update
-          investorGrid.innerHTML = '';
-          
-          if (snapshot.empty) {
+          if (querySnapshot.empty) {
               console.log("No investors found in database");
               investorGrid.innerHTML = '<p style="text-align: center; color: #555;">No investor profiles available yet. Be the first to sign up!</p>';
               return;
           }
 
-          snapshot.forEach((doc) => {
+          querySnapshot.forEach((doc) => {
               console.log("Processing investor:", doc.id);
               const investorData = doc.data();
               investorData.id = doc.id;
@@ -133,8 +129,8 @@
                   console.error("Failed to create investor card");
               }
           });
-      }, (error) => {
-          console.error("Error in real-time listener:", error);
+      }).catch(error => {
+          console.error("funds.html: Error fetching investor profiles (one-time):", error);
           investorGrid.innerHTML = '<p style="text-align: center; color: red;">Error loading investor profiles.</p>';
       });
   }
@@ -609,25 +605,27 @@
       closeAppointments.onclick = () => appointmentsModal.style.display = "none";
 
 
-      // Fetch all appointments from Firestore on load
-      getDocs(collection(db, "appointments")).then((querySnapshot) => {
-          appointments.length = 0;
-          querySnapshot.forEach((doc) => {
-              const appData = doc.data();
-              appData.id = doc.id;
-              appointments.push(appData);
-          });
-          updateDateInputLimits();
-          updateCalendar();
-      }).catch(error => {
-          console.error("Error fetching appointments:", error);
-      });
+      // Moved Fetch all appointments from Firestore on load into onAuthStateChanged
+      // getDocs(collection(db, "appointments")).then((querySnapshot) => {
+      //     appointments.length = 0; // Clear existing appointments before pushing new ones
+      //     querySnapshot.forEach((doc) => {
+      //         const appData = doc.data();
+      //         appData.id = doc.id; // Store the document ID
+      //         appointments.push(appData);
+      //     });
+      //     updateDateInputLimits();
+      //     updateCalendar();
+      // }).catch(error => {
+      //     console.error("Error fetching appointments:", error);
+      // });
 
       const urlParams = new URLSearchParams(window.location.search);
       const incomingTestId = urlParams.get('test');
       if (incomingTestId) {
+          // If testId is defined from URL, update the local storage.
+          // This ensures that showQRCode uses the correct ID if loaded via QR.
           localStorage.setItem('currentTestId', incomingTestId);
-          window.testFirebaseSync();
+          window.testFirebaseSync(); // Call global testFirebaseSync
       }
 
       document.getElementById("calendarToggle").addEventListener("click", function () {
@@ -635,8 +633,8 @@
           calendar.classList.toggle("d-none");
       });
 
-      // Initial display of investors
-      displayAllInvestors();
+      // Initial display of investors - removed from here and moved into onAuthStateChanged
+      // displayAllInvestors();
   });
 
   // Check admin status using Firebase Auth:
@@ -644,7 +642,7 @@
   // since it depends on Firebase Auth state and not just DOM readiness.
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      console.log("User is logged in. UID:", user.uid);
+      console.log("funds.html: onAuthStateChanged - User IS logged in. UID:", user.uid);
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const userData = userDoc.data();
       
@@ -655,7 +653,24 @@
       }
       // Display investors only if a user is logged in
       displayAllInvestors();
+
+      // Fetch all appointments from Firestore ONLY when a user is logged in
+      getDocs(collection(db, "appointments")).then((querySnapshot) => {
+          console.log("funds.html: Fetched appointments (one-time).");
+          appointments.length = 0; // Clear existing appointments before pushing new ones
+          querySnapshot.forEach((doc) => {
+              const appData = doc.data();
+              appData.id = doc.id; // Store the document ID
+              appointments.push(appData);
+          });
+          updateDateInputLimits();
+          updateCalendar();
+      }).catch(error => {
+          console.error("funds.html: Error fetching appointments:", error);
+      });
+
     } else {
+      console.log("funds.html: onAuthStateChanged - User NOT logged in.");
       document.getElementById('adminPanel').style.display = 'none';
       // Clear investors if no user is logged in
       if (investorGrid) {
