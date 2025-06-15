@@ -1,31 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyD5-z6VeO7jeIDMUHNrkRVM-Yd38c93GSY",
-    authDomain: "stratosapp-acdaa.firebaseapp.com",
-    projectId: "stratosapp-acdaa",
-    storageBucket: "stratosapp-acdaa.firebasestorage.app",
-    messagingSenderId: "129107712635",
-    appId: "1:129107712635:web:064019cf5984db153020de",
-    measurementId: "G-0RHF37X89J"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stratos Investor Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -35,27 +13,33 @@
       background-color: #d6dafc;
       color: #12263a;
     }
-  header {
-  color: white;
-  background-image: url("https://i.pinimg.com/736x/05/0c/5e/050c5e707ae9b9a97489c8eb62269f45.jpg");
-  background-size: cover;        /* Cover full area */
-  background-position: center;   /* Center the image */
-  background-repeat: no-repeat;  /* No repeat */
-  min-height: 300px;             /* Set a minimum height */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2rem;
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
-}
+
+    header {
+      color: white;
+      background-image: url("https://i.pinimg.com/736x/05/0c/5e/050c5e707ae9b9a97489c8eb62269f45.jpg");
+      background-size: cover;
+      /* Cover full area */
+      background-position: center;
+      /* Center the image */
+      background-repeat: no-repeat;
+      /* No repeat */
+      min-height: 300px;
+      /* Set a minimum height */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+    }
 
     .container {
       max-width: 1100px;
       margin: auto;
       padding: 2rem 1rem;
     }
+
     .filter-container {
       background: linear-gradient(to right, #b6c1d6, #d2d9e8);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
@@ -67,11 +51,13 @@
       gap: 1rem;
       flex-wrap: wrap;
     }
+
     .filter-container label {
       font-weight: 600;
       font-size: 1.05rem;
       color: #2b3c53;
     }
+
     #domain-filter {
       padding: 0.6rem 1rem;
       border-radius: 0.75rem;
@@ -80,23 +66,27 @@
       font-size: 1rem;
       color: #1a1f2e;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
+
     #domain-filter:hover {
       background: #d1dbe8;
     }
+
     .mentors {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
     }
+
     .mentor-card {
-      background: 	#b0b5f2;
+      background: #b0b5f2;
       padding: 1.5rem;
       border-radius: 1rem;
       text-align: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
+
     .mentor-card img {
       width: 100px;
       height: 100px;
@@ -104,6 +94,7 @@
       object-fit: cover;
       margin-bottom: 1rem;
     }
+
     .email-link {
       font-size: 0.9rem;
       color: #2c87aa;
@@ -111,6 +102,7 @@
       display: block;
       margin-top: 0.4rem;
     }
+
     .connect-btn {
       margin-top: 1rem;
       background: #4ba3c3;
@@ -120,6 +112,7 @@
       border-radius: 0.5rem;
       cursor: pointer;
     }
+
     .connect-btn:hover {
       background: #2c87aa;
     }
@@ -133,7 +126,8 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
     }
 
     .modal-content {
@@ -165,13 +159,18 @@
     .form-group label {
       display: block;
       margin-bottom: 5px;
+      font-weight: bold;
     }
 
-    .form-group input {
-      width: 100%;
+    .form-group input,
+    .form-group textarea {
+      width: calc(100% - 16px);
+      /* Account for padding */
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
+      box-sizing: border-box;
+      /* Include padding and border in the element's total width and height */
     }
 
     .submit-btn {
@@ -181,6 +180,7 @@
       padding: 10px 20px;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 1rem;
     }
 
     .submit-btn:hover {
@@ -189,13 +189,13 @@
   </style>
   <script src="https://smtpjs.com/v3/smtp.js"></script>
 </head>
+
 <body>
   <header>
     <h1>Stratos Mentor Hub</h1>
     <p style="font-size:20px;font-style:bold;">Connect with India's top mentors</p>
   </header>
 
-  <!-- Add modal HTML -->
   <div id="connectionModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
@@ -215,15 +215,15 @@
           <input type="datetime-local" id="appointmentDate" name="appointmentDate" required>
         </div>
         <div class="form-group">
-          <label for="message">Message</label>
-          <input type="text" id="message" name="message" required>
+          <label for="message">Your Message</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
         </div>
         <button type="submit" class="submit-btn">Send Request</button>
       </form>
     </div>
   </div>
 
-  <div class="filter-container">
+  <div class="container filter-container">
     <label for="domain-filter">🔍 Filter by Domain:</label>
     <select id="domain-filter">
       <option value="All">All Domains</option>
@@ -231,256 +231,221 @@
       <option value="Tech">💻 Tech</option>
       <option value="Healthcare">🩺 Healthcare</option>
       <option value="Wellness">🌿 Wellness</option>
-    </select>
+      </select>
   </div>
 
   <main class="container">
-    <h2>Meet Our Investors</h2>
-    <div class="mentors" id="investor-list"></div>
-    <div id="new-mentor"></div>
+    <h2>Meet Our Investors & Mentors</h2>
+    <div class="mentors" id="investor-list">
+      </div>
   </main>
 
-  <script>
-    const investors = [
-     
-    
-  {
-    name: "Nandan Nilekani",
-    domain: "Tech",
-    sector: "Tech, FinTech",
-    email: "nandan@gmail.com",
-    image: "https://th.bing.com/th/id/OIP.yVos6niUDviWeFBzCtsNaAHaEo",
-    bio: "Co-founder of Infosys, Nilekani has backed several Indian fintech and digital ID ventures."
-  },
-  {
-    name: "Sanjiv Bajaj",
-    domain: "Finance",
-    sector: "Finance, Insurance",
-    email: "bhatsanjana2004@gmail.com",
-    image: "https://th.bing.com/th/id/OIP._k2ocN7WeHBPGmdG4beZ2QHaEK",
-    bio: "Managing Director of Bajaj Finserv and known for investing in finance and insurance innovation."
-  },
-  {
-    name: "Kunal Bahl",
-    domain: "Tech",
-    sector: "E-commerce",
-    email: "kunal@gmail.com",
-    image: "data:image/jpeg;base64,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",
-    bio: "Co-founder of Snapdeal, active in supporting early-stage startups."
-  },
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+    import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
-  {
-    name: "Padmasree Warrior",
-    domain: "Tech",
-    sector: "Technology, Leadership",
-    email: "padmasree.warrior@gmail.com",
-    image: "https://media.licdn.com/dms/image/v2/C5603AQG6X9VVJbDq8A/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1548022109732?e=2147483647&v=beta&t=mlRCVN2uKkCqsANKGsWURHu-RqPvK0mcucIOtbnLrrE",
-    bio: "Former CTO of Cisco, active angel investor in deep tech startups."
-  },
-{
-    name: "N. R. Narayana Murthy",
-    domain: "Tech",
-    sector: "Information Technology, Entrepreneurship, Leadership",
-    email: "narayana.murthy@example.com", 
-    image: "https://www.infosys.com/content/dam/infosys-web/en/global-resource/photos/nrn.jpg",
-    bio: "Co-founder of Infosys, a global leader in consulting, technology, outsourcing, and next-generation services. He is widely regarded as the father of the Indian IT industry and a significant mentor for countless entrepreneurs."
-  },
-  {
-    name: "Chanda Kochhar",
-    domain: "Finance",
-    sector: "Banking, Financial Services, Leadership",
-    email: "chanda.kochhar@example.com", 
-    image: "https://asiasociety.org/sites/default/files/styles/1200w/public/1/150915_chanda_kochhar_icici.jpg",
-    bio: "Former Managing Director and CEO of ICICI Bank. She played a pivotal role in the growth of ICICI Bank and has been recognized globally for her leadership in the financial sector."
-  },
-  {
-    name: "Dr. Devi Prasad Shetty",
-    domain: "Healthcare",
-    sector: "Cardiology, Healthcare Management, Affordable Healthcare",
-    email: "devi.shetty@example.com", 
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyQWOB2N753rymqi6cF70jZ9w5bCaYOMP4TA&s",
-    bio: "A renowned cardiac surgeon and chairman of Narayana Health. He is known for pioneering affordable healthcare models and performing a large number of heart surgeries."
-  },
-  {
-    name: "Swami Sukhabodhananda",
-    domain: "Wellness",
-    sector: "Spiritual Coaching, Motivation, Mind Management",
-    email: "swami.sukhabodhananda@example.com", 
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ_-ZB_5FixGY80GeH-Aw_Z0dbYwzAR_RrmA&s",
-    bio: "A prominent spiritual guru and author, known for his unique blend of ancient wisdom with modern management techniques. He is a sought-after speaker for corporate leadership and personal transformation."
-  },
- 
-    ];
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD5-z6VeO7jeIDMUHNrkRVM-Yd38c93GSY",
+      authDomain: "stratosapp-acdaa.firebaseapp.com",
+      projectId: "stratosapp-acdaa",
+      storageBucket: "stratosapp-acdaa.firebasestorage.app",
+      messagingSenderId: "129107712635",
+      appId: "1:129107712635:web:064019cf5984db153020de",
+      measurementId: "G-0RHF37X89J"
+    };
 
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app); // Initialize Firestore
+
+    // Get DOM elements
     const investorList = document.getElementById('investor-list');
     const domainFilter = document.getElementById('domain-filter');
-    const newMentorDiv = document.getElementById('new-mentor');
-
-    function createInvestorCard(investor) {
-      const card = document.createElement('div');
-      card.className = 'mentor-card';
-      card.innerHTML = `
-        <img src="${investor.image}" alt="${investor.name}" />
-        <h3>${investor.name}</h3>
-        <p><strong>Domain:</strong> ${investor.domain}</p>
-        <p>${investor.bio}</p>
-        <a href="mailto:${investor.email}" class="email-link">${investor.email}</a>
-        <button class="connect-btn" onclick="openConnectionModal('${investor.name}', '${investor.email}')">Connect</button>
-      `;
-      return card;
-    }
-
-    // Get modal elements
     const modal = document.getElementById('connectionModal');
     const closeBtn = document.querySelector('.close');
     const mentorNameSpan = document.getElementById('mentorName');
     const mentorEmailInput = document.getElementById('mentorEmail');
     const connectionForm = document.getElementById('connectionForm');
 
-    // Open modal function
-    function openConnectionModal(mentorName, mentorEmail) {
-      modal.style.display = "block";
-      mentorNameSpan.textContent = mentorName;
-      mentorEmailInput.value = mentorEmail;
-      
-      // Set min date to today
-      const today = new Date();
-      const dateInput = document.getElementById('appointmentDate');
-      dateInput.min = today.toISOString().slice(0, 16);
+    let investorsData = [];
+    let mentorsData = [];
+
+    // Function to create an investor/mentor card
+    function createPersonCard(person) {
+      const card = document.createElement('div');
+      card.className = 'mentor-card';
+      card.innerHTML = `
+        <img src="${person.image}" alt="${person.name}" onerror="this.onerror=null;this.src='https://via.placeholder.com/100?text=No+Image';" />
+        <h3>${person.name}</h3>
+        <p><strong>Domain:</strong> ${person.domain}</p>
+        <p>${person.bio}</p>
+        <a href="mailto:${person.email}" class="email-link">${person.email}</a>
+        <button class="connect-btn" data-name="${person.name}" data-email="${person.email}">Connect</button>
+      `;
+      // Attach event listener directly to the button
+      const connectBtn = card.querySelector('.connect-btn');
+      connectBtn.addEventListener('click', () => {
+        openConnectionModal(connectBtn.dataset.name, connectBtn.dataset.email);
+      });
+      return card;
     }
 
-    // Close modal when clicking (x)
-    closeBtn.onclick = function() {
-      modal.style.display = "none";
-    }
+    // Function to render combined and filtered data
+    function renderCombinedData() {
+      const currentFilter = domainFilter.value;
+      const combinedList = [...investorsData, ...mentorsData]; // Combine both arrays
 
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = "none";
+      const filtered = currentFilter === 'All' ?
+        combinedList :
+        combinedList.filter(item => item.domain === currentFilter);
+
+      investorList.innerHTML = ''; // Clear previous display
+      if (filtered.length === 0) {
+        investorList.innerHTML = '<p>No mentors or investors found for this domain.</p>';
+      } else {
+        filtered.forEach(item => investorList.appendChild(createPersonCard(item)));
       }
     }
 
-    // Handle form submission
+    // Real-time listener for 'investors' collection
+    onSnapshot(collection(db, "investors"), (snapshot) => {
+      investorsData = []; // Clear current data
+      snapshot.forEach(doc => {
+        investorsData.push({ id: doc.id, ...doc.data() }); // Include doc.id if needed
+      });
+      renderCombinedData(); // Re-render with updated investor data
+    }, (error) => {
+      console.error("Error loading investors from Firebase:", error);
+      investorList.innerHTML = '<p style="color:red;">Error loading investors.</p>';
+    });
+
+    // Real-time listener for 'mentors' collection
+    onSnapshot(collection(db, "mentors"), (snapshot) => {
+      mentorsData = []; // Clear current data
+      snapshot.forEach(doc => {
+        mentorsData.push({ id: doc.id, ...doc.data() }); // Include doc.id if needed
+      });
+      renderCombinedData(); // Re-render with updated mentor data
+    }, (error) => {
+      console.error("Error loading mentors from Firebase:", error);
+      // You might want a different error message or log for mentors
+    });
+
+    // Add event listener for domain filter
+    domainFilter.addEventListener('change', renderCombinedData);
+
+    // Modal functions
+    function openConnectionModal(personName, personEmail) {
+      modal.style.display = "block";
+      mentorNameSpan.textContent = personName;
+      mentorEmailInput.value = personEmail;
+
+      // Set min date to today for datetime-local input
+      const today = new Date();
+      const offset = today.getTimezoneOffset() * 60000; // Offset in milliseconds
+      const localISOTime = new Date(today.getTime() - offset).toISOString().slice(0, 16);
+      document.getElementById('appointmentDate').min = localISOTime;
+    }
+
+    closeBtn.onclick = function() {
+      modal.style.display = "none";
+      connectionForm.reset(); // Reset form when closing
+      const successMessage = connectionForm.querySelector('.success-message');
+      if (successMessage) successMessage.remove(); // Remove success message
+      connectionForm.querySelector('.submit-btn').disabled = false;
+      connectionForm.querySelector('.submit-btn').textContent = 'Send Request';
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+        connectionForm.reset(); // Reset form when closing
+        const successMessage = connectionForm.querySelector('.success-message');
+        if (successMessage) successMessage.remove(); // Remove success message
+        connectionForm.querySelector('.submit-btn').disabled = false;
+        connectionForm.querySelector('.submit-btn').textContent = 'Send Request';
+      }
+    }
+
+    // Handle form submission for email
     connectionForm.onsubmit = async function(e) {
       e.preventDefault();
-      
-      const connectBtn = document.querySelector('.connect-btn');
-      connectBtn.disabled = true;
-      connectBtn.textContent = 'Sending...';
+
+      const submitBtn = connectionForm.querySelector('.submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
 
       const userName = document.getElementById('userName').value;
       const userEmail = document.getElementById('userEmail').value;
-      const appointmentDate = new Date(document.getElementById('appointmentDate').value).toLocaleString();
+      const appointmentDate = document.getElementById('appointmentDate').value;
       const message = document.getElementById('message').value;
       const mentorEmail = mentorEmailInput.value;
+      const mentorName = mentorNameSpan.textContent;
 
       const emailBody = `
-        New Connection Request Details:
-        
-        From: ${userName}
-        Email: ${userEmail}
-        Preferred Appointment Date: ${appointmentDate}
-        Message: ${message}
-        
-        This is a connection request sent through the Stratos Mentor Hub.
+        <h3>New Connection Request for ${mentorName}</h3>
+        <p><strong>From:</strong> ${userName}</p>
+        <p><strong>Email:</strong> ${userEmail}</p>
+        <p><strong>Preferred Appointment Date & Time:</strong> ${appointmentDate}</p>
+        <p><strong>Message:</strong> ${message}</p>
+        <hr>
+        <p>This request was sent via the Stratos Mentor Hub.</p>
       `;
 
       try {
         Email.send({
-            Host : "smtp.elasticemail.com",
-            Username : "YOUR_USERNAME", // Your Elastic Email username
-            Password : "YOUR_PASSWORD", // Your Elastic Email password
-            To : mentorEmail,
-            From : "YOUR_VERIFIED_SENDER_EMAIL", // Your verified sender email from Elastic Email
-            Subject : `Connection Request from ${userName}`,
-            Body : emailBody
-        }).then(function (message) {
-          if(message === "OK") {
-            // Show success message
-            const successMessage = document.createElement('div');
-            successMessage.style.backgroundColor = '#4CAF50';
-            successMessage.style.color = 'white';
-            successMessage.style.padding = '10px';
-            successMessage.style.borderRadius = '4px';
-            successMessage.style.marginTop = '10px';
-            successMessage.textContent = `Request sent successfully to ${mentorNameSpan.textContent}! They will receive your details at ${mentorEmail}`;
-            
-            connectionForm.appendChild(successMessage);
-            
-            // Reset form after 2 seconds
-            setTimeout(() => {
-              modal.style.display = "none";
-              connectionForm.reset();
-              successMessage.remove();
-              connectBtn.disabled = false;
-              connectBtn.textContent = 'Connect';
-            }, 2000);
-          } else {
-            throw new Error("Failed to send email");
+          Host: "smtp.elasticemail.com", // Or your SMTP host
+          Username: "YOUR_USERNAME",     // <<< REPLACE THIS with your SMTP username
+          Password: "YOUR_PASSWORD",     // <<< REPLACE THIS with your SMTP password
+          To: mentorEmail,
+          From: "YOUR_VERIFIED_SENDER_EMAIL", // <<< REPLACE THIS with your verified sender email
+          Subject: `Stratos Mentor Hub: Connection Request from ${userName}`,
+          Body: emailBody,
+          IsSMTP: true,
+          SecureToken: "YOUR_SECURE_TOKEN" // Only if using a secure token, otherwise remove
+        }).then(
+          message => {
+            if (message === "OK") {
+              const successMessage = document.createElement('div');
+              successMessage.className = 'success-message';
+              successMessage.style.backgroundColor = '#4CAF50';
+              successMessage.style.color = 'white';
+              successMessage.style.padding = '10px';
+              successMessage.style.borderRadius = '4px';
+              successMessage.style.marginTop = '10px';
+              successMessage.textContent = `Request sent successfully! ${mentorName} will receive your details at ${mentorEmail}`;
+
+              connectionForm.appendChild(successMessage);
+
+              setTimeout(() => {
+                modal.style.display = "none";
+                connectionForm.reset();
+                if (successMessage) successMessage.remove();
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Request';
+              }, 3000); // Close modal and reset after 3 seconds
+            } else {
+              throw new Error(message); // Throw the error message from SMTP.js
+            }
           }
+        ).catch(error => {
+          console.error("Error sending email:", error);
+          alert("Error sending request. Please check your SMTP credentials and try again. Error: " + error);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Request';
         });
+
       } catch (error) {
-        alert("Error sending request. Please try again.");
-        console.error("Error:", error);
-        connectBtn.disabled = false;
-        connectBtn.textContent = 'Connect';
+        console.error("Caught error:", error);
+        alert("An unexpected error occurred. Please try again.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Request';
       }
-    }
-
-    function displayInvestors(filter = 'All') {
-      investorList.innerHTML = '';
-      
-      // Combine static investors with mentors from localStorage
-      let allInvestors = [];
-
-Promise.all([
-  db.collection("investors").get(),
-  db.collection("mentors").get()
-]).then(([investorSnapshot, mentorSnapshot]) => {
-  
-  investorSnapshot.forEach(doc => {
-    allInvestors.push(doc.data());
-  });
-
-  mentorSnapshot.forEach(doc => {
-    allInvestors.push(doc.data());
-  });
-
-  // Now allInvestors contains both mentors and investors
-  // You can use this for display
-  allInvestors.forEach(investor => {
-    investorList.appendChild(createInvestorCard(investor));
-  });
-
-}).catch(error => {
-  console.error("Error loading data from Firebase:", error);
-});
-
-      const filtered = filter === 'All' ? allInvestors : allInvestors.filter(i => i.domain === filter);
-      filtered.forEach(investor => investorList.appendChild(createInvestorCard(investor)));
-    }
-    
-    domainFilter.addEventListener('change', e => displayInvestors(e.target.value));
-    
-    // Initial display
-    displayInvestors();
-    
-    // Add event listener to window storage event to update the display when localStorage changes
-  db.collection("investors").onSnapshot(snapshot => {
-  const investors = [];
-  snapshot.forEach(doc => {
-    investors.push(doc.data());
-  });
-
-  const filtered = domainFilter.value === 'All'
-    ? investors
-    : investors.filter(i => i.domain === domainFilter.value);
-
-  investorList.innerHTML = '';
-  filtered.forEach(investor => investorList.appendChild(createInvestorCard(investor)));
-});
-
+    };
   </script>
 </body>
+
 </html>

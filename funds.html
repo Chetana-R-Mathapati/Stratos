@@ -5,6 +5,7 @@
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+  import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,6 +24,7 @@
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
+  const db = getFirestore(app);
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -676,44 +678,23 @@
 
         investorGrid.innerHTML = ''; // Clear existing content before populating
 
-      const investors = [];
-
-db.collection("investors").get().then(snapshot => {
-  snapshot.forEach(doc => {
-    investors.push(doc.data());
-  });
-
-  // 👉 You can now use investors[] array instead of allInvestorsString
-  // Example: display all investors
-  investors.forEach(investor => {
-    investorList.appendChild(createInvestorCard(investor));
-  });
-
-}).catch(error => {
-  console.error("Error fetching investors:", error);
-});
-
-
-        if (allInvestorsString) {
-            try {
-                const allInvestors = JSON.parse(allInvestorsString);
-                console.log('Parsed investor data:', allInvestors); // For debugging: check parsed data
-                if (allInvestors.length > 0) {
-                    allInvestors.forEach(investor => {
-                        investorGrid.appendChild(createInvestorCard(investor));
-                    });
-                } else {
-                    investorGrid.innerHTML = '<p style="text-align: center; color: #555;">No investor profiles available yet. Be the first to sign up!</p>';
-                }
-            } catch (e) {
-                console.error("Error parsing investors data from localStorage:", e);
-                investorGrid.innerHTML = '<p style="text-align: center; color: red;">Error loading investor profiles due to data corruption.</p>';
+        // Fetch investors from Firestore
+        getDocs(collection(db, "investors")).then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                investorGrid.innerHTML = '<p style="text-align: center; color: #555;">No investor profiles available yet. Be the first to sign up!</p>';
+                return;
             }
-        } else {
-            investorGrid.innerHTML = '<p style="text-align: center; color: #555;">No investor profiles found. Sign up to add one!</p>';
-        }
+            querySnapshot.forEach((doc) => {
+                const investorData = doc.data();
+                // Assign the Firestore document ID for potential future use
+                investorData.id = doc.id;
+                investorGrid.appendChild(createInvestorCard(investorData));
+            });
+        }).catch(error => {
+            console.error("Error fetching investors:", error);
+            investorGrid.innerHTML = '<p style="text-align: center; color: red;">Error loading investor profiles.</p>';
+        });
     }
-
 
     function openModal(investorName) {
         // When opening the modal, find the investor from localStorage data if needed,
@@ -755,35 +736,32 @@ db.collection("investors").get().then(snapshot => {
         // For now, mirroring your existing logic:
         appointments.push(appointmentData); // Adds to the in-memory array for calendar display
 
-        db.collection("appointments").add(appointmentData)
-  .then(() => console.log("Appointment saved to Firebase!"))
-  .catch(err => console.error("Error saving appointment", err));
-db.collection("users").doc(userId).collection("appointments").add(appointmentData);
+        addDoc(collection(db, "appointments"), appointmentData)
+          .then(() => {
+            console.log("Appointment saved to Firebase!");
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('successModal').style.display = 'block';
 
-db.collection("settings").add({
-  setting: "taxServicesEnabled",
-  value: true
-});
+            try {
+                window.opener.postMessage({ type: 'ENABLE_TAX_SERVICES' }, '*');
+            } catch (err) {
+                console.log('Could not notify parent window');
+            }
 
+            // Update calendar display after booking
+            const bookedDate = new Date(dateInput.value);
+            monthSelect.value = bookedDate.getMonth();
+            yearSelect.value = bookedDate.getFullYear();
+            currentMonth = bookedDate.getMonth();
+            updateCalendar();
 
-        document.getElementById('modal').style.display = 'none';
-        document.getElementById('modalOverlay').style.display = 'block';
-        document.getElementById('successModal').style.display = 'block';
-
-        try {
-            window.opener.postMessage({ type: 'ENABLE_TAX_SERVICES' }, '*');
-        } catch (err) {
-            console.log('Could not notify parent window');
-        }
-
-        // Update calendar display after booking
-        const bookedDate = new Date(dateInput.value);
-        monthSelect.value = bookedDate.getMonth();
-        yearSelect.value = bookedDate.getFullYear();
-        currentMonth = bookedDate.getMonth();
-        updateCalendar();
-
-        showToast("Appointment Booked Successfully!");
+            showToast("Appointment Booked Successfully!");
+          })
+          .catch(err => {
+            console.error("Error saving appointment", err);
+            showToast("Error booking appointment.", true);
+          });
     };
 
     function navigateToTax() {
@@ -941,41 +919,47 @@ db.collection("settings").add({
     updateDateInputLimits();
     updateCalendar();
 
-    function cancelAppointment(index) {
+    function cancelAppointment(id) {
         const confirmMessage = "Are you sure you want to cancel this appointment?";
 
         if (confirm(confirmMessage)) {
-            // Remove from the in-memory array (appointments)
-            appointments.splice(index, 1);
-            showToast("Appointment cancelled successfully.");
-            updateCalendar(); // Refresh calendar to reflect cancellation
-            displayAppointments(); // Refresh appointment list in modal
-
-            // IMPORTANT: If you want cancellations to persist across sessions,
-            // you'll need a more robust way to store ALL appointments in localStorage
-            // and update that localStorage array after a cancellation.
-            // For now, this only affects the current session's calendar display.
+            deleteDoc(doc(db, "appointments", id))
+                .then(() => {
+                    showToast("Appointment cancelled successfully.");
+                    // Remove from the in-memory array (appointments)
+                    const index = appointments.findIndex(app => app.id === id);
+                    if (index > -1) {
+                        appointments.splice(index, 1);
+                    }
+                    updateCalendar(); // Refresh calendar to reflect cancellation
+                    displayAppointments(); // Refresh appointment list in modal
+                })
+                .catch(error => {
+                    console.error("Error removing document: ", error);
+                    showToast("Error cancelling appointment.", true);
+                });
         }
     }
 
     function displayAppointments() {
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value);
+        const day = parseInt(modalDate.textContent.split(' ')[1].replace(',', ''));
+
+        const selectedDate = new Date(year, month, day);
+
         const dayAppointments = appointments.filter(app => {
             const d = new Date(app.date);
-            const modalDateParts = modalDate.textContent.split(' ');
-            const displayMonth = months.indexOf(modalDateParts[0]);
-            const displayDay = parseInt(modalDateParts[1].replace(',', ''));
-            const displayYear = parseInt(modalDateParts[2]);
-
-            return d.getDate() === displayDay &&
-                   d.getMonth() === displayMonth &&
-                   d.getFullYear() === displayYear;
+            return d.getDate() === selectedDate.getDate() &&
+                   d.getMonth() === selectedDate.getMonth() &&
+                   d.getFullYear() === selectedDate.getFullYear();
         });
 
         appointmentDetails.innerHTML = "";
         if (dayAppointments.length === 0) {
             appointmentDetails.innerHTML = "<p>No appointments for this day.</p>";
         } else {
-            dayAppointments.forEach((app, index) => {
+            dayAppointments.forEach((app) => {
                 appointmentDetails.innerHTML += `
                     <div class="appointment-item">
                         <h3>${app.investor}</h3>
@@ -983,7 +967,7 @@ db.collection("settings").add({
                         <p><strong>Purpose:</strong> ${app.purpose}</p>
                         <button
                             class="cancel-btn"
-                            onclick="cancelAppointment(${appointments.indexOf(app)})"
+                            onclick="cancelAppointment('${app.id}')"
                         >
                             Cancel Appointment
                         </button>
@@ -1044,7 +1028,7 @@ db.collection("settings").add({
         const testData = {
             id: testId,
             title: 'Cross-device Test',
-            description: `Test from ${isMobile ? 'Mobile' : 'Desktop'}`,
+            description: `Test from ${isMobile ? 'Mobile' : 'Desktop'} `,
             amount: 10000,
             type: 'Test',
             timestamp: Date.now(),
@@ -1109,9 +1093,20 @@ db.collection("settings").add({
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        displayAllInvestors(); // Call this to load investors from localStorage
-        updateDateInputLimits();
-        updateCalendar();
+        displayAllInvestors();
+        
+        // Fetch all appointments from Firestore on load
+        getDocs(collection(db, "appointments")).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const appData = doc.data();
+                appData.id = doc.id; // Store the document ID
+                appointments.push(appData);
+            });
+            updateDateInputLimits();
+            updateCalendar();
+        }).catch(error => {
+            console.error("Error fetching appointments:", error);
+        });
     });
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -1121,13 +1116,6 @@ db.collection("settings").add({
         toggleBtn?.addEventListener("click", () => {
             calendar.classList.toggle("d-none");
         });
-    });
-
-    // Event listener for localStorage changes (e.g., if a new investor signs up in signin.html)
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'investors') { // Only update if the 'investors' data changes
-            displayAllInvestors(); // Re-render the investor grid
-        }
     });
 
 </script>
