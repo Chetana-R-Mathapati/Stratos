@@ -639,6 +639,9 @@
       displayAllInvestors();
   });
 
+  // Check admin status using Firebase Auth:
+  // This part runs outside DOMContentLoaded but inside module, which is fine
+  // since it depends on Firebase Auth state and not just DOM readiness.
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       console.log("User is logged in. UID:", user.uid);
@@ -650,8 +653,14 @@
       } else {
         document.getElementById('adminPanel').style.display = 'none';
       }
+      // Display investors only if a user is logged in
+      displayAllInvestors();
     } else {
       document.getElementById('adminPanel').style.display = 'none';
+      // Clear investors if no user is logged in
+      if (investorGrid) {
+        investorGrid.innerHTML = '<p style="text-align: center; color: #555;">Please log in to view investor profiles.</p>';
+      }
     }
   });
 
