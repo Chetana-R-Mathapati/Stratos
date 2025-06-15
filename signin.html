@@ -5,6 +5,42 @@
   <title>Create Account</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD5-z6VeO7jeIDMUHNrkRVM-Yd38c93GSY",
+      authDomain: "stratosapp-acdaa.firebaseapp.com",
+      projectId: "stratosapp-acdaa",
+      storageBucket: "stratosapp-acdaa.firebasestorage.app",
+      messagingSenderId: "129107712635",
+      appId: "1:129107712635:web:064019cf5984db153020de",
+      measurementId: "G-0RHF37X89J"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Make Firebase instances available globally (for ease of use in inline scripts if any, though not ideal)
+    window.auth = auth;
+    window.db = db;
+    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.collection = collection;
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.query = query;
+    window.where = where;
+    window.doc = doc;
+    window.updateDoc = updateDoc;
+    window.setDoc = setDoc;
+  </script>
   <style>
     body {
       background: linear-gradient(135deg, #FF8A80, #FF6F00, #FFEB3B);
@@ -650,107 +686,112 @@
           return;
         }
 
-        try {
-          // Get existing users
-          const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const email = form.email.value.trim();
+        const password = form.password.value;
+        const fullName = form.fullName.value.trim();
+        const role = form.role.value;
 
-          // Check if email already exists
-          if (users.some(u => u.email === email.value.trim())) {
-            showError(email, 'Email already registered');
+        try {
+          // Create user with Firebase Authentication
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          console.log("Firebase user created:", user.uid);
+
+          // Store user details in Firestore (general users collection, or specific if needed)
+          try {
+            const userDataToStore = {
+              fullName: fullName,
+              email: email,
+              role: role,
+              verified: true,
+              createdAt: new Date().toISOString()
+            };
+            console.log("Attempting to set user data in Firestore for UID:", user.uid, "with data:", userDataToStore);
+            await setDoc(doc(db, "users", user.uid), userDataToStore);
+            console.log("User data successfully set in Firestore for UID:", user.uid);
+          } catch (firestoreError) {
+            console.error("Error setting user data to Firestore:", firestoreError);
+            showError(form.email, 'Failed to save user data. Please try again.');
             return;
           }
 
-          // Create new user
-          const newUser = {
-            fullName: form.fullName.value.trim(),
-            email: form.email.value.trim(),
-            password: form.password.value,
-            role: form.role.value,
-            verified: false,
-            createdAt: new Date().toISOString()
-          };
-
-          // If role is mentor, add mentor details
-          if (form.role.value === 'mentor') {
-            const mentorData = {
-              name: form.fullName.value.trim(),
-              email: form.email.value.trim(),
-              domain: form.mentorDomain.value,
-              sector: form.mentorSector.value,
-              image: previewImg.src,
-              bio: form.mentorBio.value
-            };
-
-            const mentors = JSON.parse(localStorage.getItem('mentors') || '[]');
-            mentors.push(mentorData);
-            localStorage.setItem('mentors', JSON.stringify(mentors));
+          // Immediately attempt to sign in the user after creation
+          try {
+            console.log("Attempting to sign in newly created user:", email);
+            await signInWithEmailAndPassword(auth, email, password);
+            console.log("Successfully signed in newly created user.");
+          } catch (signInError) {
+            console.error("Error signing in newly created user:", signInError);
+            showError(form.email, 'Account created, but automatic login failed. Please try logging in manually.');
           }
 
-          // If role is investor, add investor details
-          if (form.role.value === 'investor') {
+          // If role is investor, add investor details to investors collection
+          if (role === 'investor') {
             const investorData = {
-              name: form.fullName.value.trim(),
-              email: form.email.value.trim(),
-              occupation: form.investorOccupation.value.trim(),
-              image: investorPreviewImg.src,
-              bio: form.investorBio.value
+              uid: user.uid, // Link to Firebase Auth User ID
+              name: fullName,
+              email: email,
+              occupation: form.investorOccupation.value.trim() || 'N/A',
+              image: investorPreviewImg.src || 'https://via.placeholder.com/150',
+              bio: form.investorBio.value || 'No bio provided.',
+              createdAt: new Date().toISOString()
             };
 
-            const investors = JSON.parse(localStorage.getItem('investors') || '[]');
-            investors.push(investorData);
-            localStorage.setItem('investors', JSON.stringify(investors));
+            try {
+              console.log("Attempting to add investor data to Firestore:", investorData);
+              await addDoc(collection(db, "investors"), investorData);
+              console.log("Investor data successfully added to Firestore.");
+              // Redirect to login page instead of funds.html
+              window.location.href = 'login.html';
+              return;
+            } catch (investorError) {
+              console.error("Error adding investor data to Firestore:", investorError);
+              showError(form.role, 'Failed to save investor data. Please try again.');
+              return; // Stop further execution
+            }
           }
 
-          // Add to users array
-          users.push(newUser);
-          localStorage.setItem('users', JSON.stringify(users));
+          // If role is mentor, add mentor details to mentors collection
+          if (role === 'mentor') {
+            const mentorData = {
+              uid: user.uid, // Link to Firebase Auth User ID
+              name: fullName,
+              email: email,
+              domain: form.mentorDomain.value || 'N/A',
+              sector: form.mentorSector.value || 'N/A',
+              image: previewImg.src || 'https://via.placeholder.com/150',
+              bio: form.mentorBio.value || 'No bio provided.',
+              createdAt: new Date().toISOString()
+            };
+            try {
+              console.log("Attempting to add mentor data to Firestore:", mentorData);
+              await addDoc(collection(db, "mentors"), mentorData);
+              console.log("Mentor data successfully added to Firestore.");
+            } catch (mentorError) {
+              console.error("Error adding mentor data to Firestore:", mentorError);
+              showError(form.role, 'Failed to save mentor data. Please try again.');
+              return; // Stop further execution
+            }
+          }
 
-          // Show verification message
-          form.style.display = 'none';
-          document.getElementById('verificationMessage').style.display = 'block';
-
-          setTimeout(() => {
-            newUser.verified = true;
-            localStorage.setItem('users', JSON.stringify(users));
-            window.location.href = 'login.html';
-          }, 3000);
+          // Redirect to login page for all non-investor roles after successful signup
+          window.location.href = 'login.html';
 
         } catch (error) {
           console.error('Signup error:', error);
-          alert('An  error occurred during signup. Please try again.');
+          if (error.code === 'auth/email-already-in-use') {
+            showError(form.email, 'This email is already registered.');
+          } else if (error.code === 'auth/invalid-email') {
+            showError(form.email, 'Please enter a valid email address.');
+          } else if (error.code === 'auth/weak-password') {
+            showError(form.password, 'Password is too weak. Please use a stronger password.');
+          } else {
+            alert(`An error occurred during signup: ${error.message}. Please try again.`);
+          }
         }
       });
     });
-    // Inside your signup success logic in signin.html:
-if (form.role.value === 'investor') {
-    const investorData = {
-        name: form.fullName.value.trim(),
-        email: form.email.value.trim(),
-        occupation: form.investorOccupation.value.trim(),
-        image: investorPreviewImg.src, // Assuming this is the profile image URL
-        bio: form.investorBio.value
-    };
-
-    const investors = JSON.parse(localStorage.getItem('investors') || '[]');
-    investors.push(investorData);
-    localStorage.setItem('investors', JSON.stringify(investors));
-}
-// Inside your sign-up success logic (e.g., within a .then() after Firebase signup)
-if (form.role.value === 'investor') {
-    const investorData = {
-        name: form.fullName.value.trim(),
-        email: form.email.value.trim(),
-        occupation: form.investorOccupation.value.trim(),
-        image: investorPreviewImg.src, // Make sure investorPreviewImg.src has a valid URL
-        bio: form.investorBio.value
-    };
-
-    const investors = JSON.parse(localStorage.getItem('investors') || '[]');
-    investors.push(investorData);
-    localStorage.setItem('investors', JSON.stringify(investors)); // THIS LINE IS CRITICAL
-    console.log('Saved investor data to localStorage:', investorData); // ADD THIS LINE
-    console.log('Current "investors" in localStorage:', JSON.parse(localStorage.getItem('investors'))); // ADD THIS LINE
-}
   </script>
 </body>
 </html>
