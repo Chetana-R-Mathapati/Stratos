@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyD5-z6VeO7jeIDMUHNrkRVM-Yd38c93GSY",
+    authDomain: "stratosapp-acdaa.firebaseapp.com",
+    projectId: "stratosapp-acdaa",
+    storageBucket: "stratosapp-acdaa.firebasestorage.app",
+    messagingSenderId: "129107712635",
+    appId: "1:129107712635:web:064019cf5984db153020de",
+    measurementId: "G-0RHF37X89J"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stratos Investor Hub</title>
@@ -409,10 +432,31 @@
       investorList.innerHTML = '';
       
       // Combine static investors with mentors from localStorage
-      let allInvestors = [...investors];
-      const storedMentors = JSON.parse(localStorage.getItem('mentors') || '[]');
-      allInvestors = allInvestors.concat(storedMentors);
-      
+      let allInvestors = [];
+
+Promise.all([
+  db.collection("investors").get(),
+  db.collection("mentors").get()
+]).then(([investorSnapshot, mentorSnapshot]) => {
+  
+  investorSnapshot.forEach(doc => {
+    allInvestors.push(doc.data());
+  });
+
+  mentorSnapshot.forEach(doc => {
+    allInvestors.push(doc.data());
+  });
+
+  // Now allInvestors contains both mentors and investors
+  // You can use this for display
+  allInvestors.forEach(investor => {
+    investorList.appendChild(createInvestorCard(investor));
+  });
+
+}).catch(error => {
+  console.error("Error loading data from Firebase:", error);
+});
+
       const filtered = filter === 'All' ? allInvestors : allInvestors.filter(i => i.domain === filter);
       filtered.forEach(investor => investorList.appendChild(createInvestorCard(investor)));
     }
@@ -423,9 +467,20 @@
     displayInvestors();
     
     // Add event listener to window storage event to update the display when localStorage changes
-    window.addEventListener('storage', () => {
-      displayInvestors(domainFilter.value);
-    });
+  db.collection("investors").onSnapshot(snapshot => {
+  const investors = [];
+  snapshot.forEach(doc => {
+    investors.push(doc.data());
+  });
+
+  const filtered = domainFilter.value === 'All'
+    ? investors
+    : investors.filter(i => i.domain === domainFilter.value);
+
+  investorList.innerHTML = '';
+  filtered.forEach(investor => investorList.appendChild(createInvestorCard(investor)));
+});
+
   </script>
 </body>
 </html>

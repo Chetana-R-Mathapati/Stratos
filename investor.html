@@ -275,8 +275,8 @@
       };
       
       // Save appointment to localStorage
-      localStorage.setItem('investorAppointment', JSON.stringify(appointmentData));
-      localStorage.setItem('taxServicesEnabled', 'true');
+     firebase.setItem('investorAppointment', JSON.stringify(appointmentData));
+     firebase.setItem('taxServicesEnabled', 'true');
       
       // Close appointment modal
       document.getElementById('investorModal').style.display = 'none';
@@ -301,7 +301,7 @@
 
     // Navigate to tax services
     function navigateToTax() {
-      localStorage.setItem('taxServicesEnabled', 'true');
+      firebase.setItem('taxServicesEnabled', 'true');
       window.location.href = 'tax.html';
     }
 
@@ -319,7 +319,7 @@
       
       // Enable tax services if user has an appointment
       if (hasAppointment) {
-        localStorage.setItem('taxServicesEnabled', 'true');
+        firebase.setItem('taxServicesEnabled', 'true');
       }
       
       if (taxContainer && (hasAppointment || taxEnabled === 'true')) {
