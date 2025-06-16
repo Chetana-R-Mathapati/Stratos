@@ -605,6 +605,20 @@
       closeAppointments.onclick = () => appointmentsModal.style.display = "none";
 
 
+      // Moved Fetch all appointments from Firestore on load into onAuthStateChanged
+      // getDocs(collection(db, "appointments")).then((querySnapshot) => {
+      //     appointments.length = 0; // Clear existing appointments before pushing new ones
+      //     querySnapshot.forEach((doc) => {
+      //         const appData = doc.data();
+      //         appData.id = doc.id; // Store the document ID
+      //         appointments.push(appData);
+      //     });
+      //     updateDateInputLimits();
+      //     updateCalendar();
+      // }).catch(error => {
+      //     console.error("Error fetching appointments:", error);
+      // });
+
       const urlParams = new URLSearchParams(window.location.search);
       const incomingTestId = urlParams.get('test');
       if (incomingTestId) {
@@ -619,6 +633,8 @@
           calendar.classList.toggle("d-none");
       });
 
+      // Initial display of investors - removed from here and moved into onAuthStateChanged
+      // displayAllInvestors();
   });
 
   // Check admin status using Firebase Auth:

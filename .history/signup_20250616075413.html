@@ -62,18 +62,6 @@
                     <option value="mentor">Mentor</option>
                 </select>
             </div>
-            <div class="form-group">
-                <input type="text" id="mentorDomain" placeholder="Domain">
-            </div>
-            <div class="form-group">
-                <input type="text" id="mentorSector" placeholder="Sector">
-            </div>
-            <div class="form-group">
-                <input type="text" id="mentorBio" placeholder="Bio">
-            </div>
-            <div class="form-group">
-                <input type="file" id="profileImage" accept="image/*">
-            </div>
             <button type="submit">Create Account</button>
             <div class="form-links">
                 <span>Already have an account?</span>
@@ -136,10 +124,10 @@
                     const mentorData = {
                         name: fullname,
                         email: email,
-                        domain: document.getElementById('mentorDomain').value,
-                        sector: document.getElementById('mentorSector').value,
-                        image: document.getElementById('previewImg').src, // Get the actual image data URL from preview
-                        bio: document.getElementById('mentorBio').value,
+                        domain: '',
+                        sector: '',
+                        image: '',
+                        bio: '',
                         userId: user.uid
                     };
 

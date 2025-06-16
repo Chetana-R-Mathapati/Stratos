@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Stratos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD5-z6VeO7jeIDMUHNrkRVM-Yd38c93GSY",
+      authDomain: "stratosapp-acdaa.firebaseapp.com",
+      projectId: "stratosapp-acdaa",
+      storageBucket: "stratosapp-acdaa.firebasestorage.app",
+      messagingSenderId: "129107712635",
+      appId: "1:129107712635:web:064019cf5984db153020de",
+      measurementId: "G-0RHF37X89J"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Make Firebase instances available globally
+    window.auth = auth;
+    window.db = db;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.onAuthStateChanged = onAuthStateChanged;
+    window.doc = doc;
+    window.getDoc = getDoc;
+
+    // Check if user is already logged in
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("Login: onAuthStateChanged - User found. UID:", user.uid);
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          console.log("Login: Attempting to fetch user document from Firestore:", userDocRef.path);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (userDoc.exists()) {
+            console.log("Login: userDoc.exists() returned TRUE. Proceeding with data retrieval.");
+            const userData = userDoc.data();
+            console.log("Login: Retrieved userData:", userData);
+            if (userData) {
+              if (userData.role === 'mentor') {
+                window.location.href = 'mentor.html';
+              } else if (userData.role === 'investor') {
+                window.location.href = 'funds.html';
+              } else {
+                window.location.href = 'index.html';
+              }
+            } else {
+              console.error("Login: userData is null or undefined despite userDoc.exists() being true.");
+              showStatus('User data found but empty. Please contact support.', true);
+              return;
+            }
+          } else {
+            console.error("Login: userDoc.exists() returned FALSE for UID:", user.uid);
+            showStatus('User profile not found. Please ensure you have signed up correctly and your Firestore rules allow data access.', true);
+            return;
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+        }
+      }
+    });
+  </script>
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #f06, #4a90e2);
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 40px 50px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      animation: slideIn 0.8s ease-out;
+    }
+    h2 {
+      text-align: center;
+      font-family: 'Open Sans', sans-serif;
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+    .input-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #333;
+      background-color: #f9f9f9;
+      transition: all 0.3s ease;
+    }
+    .input-group input:focus, .input-group select:focus {
+      border-color: #4a90e2;
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+    .input-group label {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 500;
+    }
+    .input-group .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 42px;
+      cursor: pointer;
+      color: #666;
+    }
+    .input-group.error input {
+      border-color: #dc3545;
+    }
+    .input-group.success input {
+      border-color: #28a745;
+    }
+    .error-message {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #666;
+    }
+    .forgot-password {
+      color: #4a90e2;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: #4a90e2;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .login-btn:hover {
+      background: #357abd;
+      transform: translateY(-1px);
+    }
+    .login-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    .signup-link a {
+      color: #4a90e2;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+    .login-status {
+      text-align: center;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .login-status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .login-status.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    @keyframes slideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Welcome Back</h2>
+    <div id="loginStatus" class="login-status"></div>
+    <form id="loginForm" novalidate>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+        <div class="error-message" id="emailError"></div>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <i class="toggle-password fas fa-eye" id="togglePassword"></i>
+        <div class="error-message" id="passwordError"></div>
+      </div>
+
+      <div class="input-group">
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+          <option value="">Select a role</option>
+          <option value="user">User</option>
+          <option value="mentor">Mentor</option>
+          <option value="investor">Investor</option>
+        </select>
+        <div class="error-message" id="roleError"></div>
+      </div>
+
+      <div class="remember-forgot">
+        <label class="remember-me">
+          <input type="checkbox" name="rememberMe" id="rememberMe">
+          Remember Me
+        </label>
+        <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+
+    <div class="signup-link">
+      Don't have an account? <a href="signin.html">Sign up</a>
+    </div>
+  </div>
+
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('loginForm');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const roleSelect = document.getElementById('role');
+      const loginStatus = document.getElementById('loginStatus');
+      const rememberMeCheckbox = document.getElementById('rememberMe');
+      const togglePassword = document.getElementById('togglePassword');
+
+      // Load saved credentials if available
+      const savedUser = JSON.parse(localStorage.getItem('savedUser'));
+      if (savedUser) {
+        emailInput.value = savedUser.email || '';
+        roleSelect.value = savedUser.role || '';
+        rememberMeCheckbox.checked = true;
+      }
+
+      // Password visibility toggle
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      // Show status message
+      function showStatus(message, isError = false) {
+        loginStatus.textContent = message;
+        loginStatus.className = `login-status ${isError ? 'error' : 'success'}`;
+        loginStatus.style.display = 'block';
+      }
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        try {
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+          const role = roleSelect.value;
+
+          if (!email || !password || !role) {
+            showStatus('Please fill in all fields', true);
+            return;
+          }
+
+          // Sign in with Firebase Authentication
+          const userCredential = await window.signInWithEmailAndPassword(window.auth, email, password);
+          const user = userCredential.user;
+          console.log("Login form submit: User successfully authenticated. UID:", user.uid);
+
+          // Get user data from Firestore
+          const userDoc = await window.getDoc(window.doc(window.db, "users", user.uid));
+          
+          if (!userDoc.exists()) {
+            console.error("Login: User document does not exist in Firestore for UID:", user.uid);
+            showStatus('User profile not found. Please ensure you have signed up correctly and your Firestore rules allow data access.', true);
+            return;
+          }
+
+          const userData = userDoc.data();
+
+          if (!userData) {
+            // This case should theoretically not happen if userDoc.exists() is true, but as a fallback
+            showStatus('User data not found or empty. Please contact support.', true);
+            return;
+          }
+
+          // Verify role matches
+          if (userData.role !== role) {
+            showStatus('Invalid role selected', true);
+            return;
+          }
+
+          // Store user info in localStorage
+          const userInfo = {
+            uid: user.uid,
+            fullName: userData.fullName,
+            email: userData.email,
+            role: userData.role,
+            lastLogin: new Date().toISOString()
+          };
+          
+          localStorage.setItem('user', JSON.stringify(userInfo));
+          localStorage.setItem('userLoggedIn', 'true');
+
+          // Save credentials if remember me is checked
+          if (rememberMeCheckbox.checked) {
+            localStorage.setItem('savedUser', JSON.stringify(userInfo));
+          } else {
+            localStorage.removeItem('savedUser');
+          }
+
+          showStatus('Login successful! Redirecting...', false);
+
+          // Check for redirect URL from session storage
+          const redirectUrl = sessionStorage.getItem('redirectUrl');
+          sessionStorage.removeItem('redirectUrl');
+
+          // Redirect based on role after a short delay
+          setTimeout(() => {
+            if (redirectUrl) {
+              window.location.href = redirectUrl;
+            } else {
+              window.location.href = userData.role === 'mentor' ? 'mentor.html' :
+                                   userData.role === 'investor' ? 'funds.html' : 
+                                   'index.html';
+            }
+          }, 1500);
+
+        } catch (error) {
+          console.error('Login error:', error);
+          if (error.code === 'auth/user-not-found') {
+            showStatus('No account found with this email', true);
+          } else if (error.code === 'auth/wrong-password') {
+            showStatus('Invalid password', true);
+          } else if (error.code === 'auth/invalid-email') {
+            showStatus('Invalid email format', true);
+          } else if (error.code === 'auth/invalid-credential') {
+            showStatus('Invalid email or password', true);
+          } else {
+            showStatus('An error occurred during login. Please try again.', true);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>      <button type="submit" class="login-btn">Login</button>
+    </form>
+
+    <div class="signup-link">
+      Don't have an account? <a href="signin.html">Sign up</a>
+    </div>
+  </div>
+
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('loginForm');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const roleSelect = document.getElementById('role');
+      const loginStatus = document.getElementById('loginStatus');
+      const rememberMeCheckbox = document.getElementById('rememberMe');
+      const togglePassword = document.getElementById('togglePassword');
+
+      // Load saved credentials if available
+      const savedUser = JSON.parse(localStorage.getItem('savedUser'));
+      if (savedUser) {
+        emailInput.value = savedUser.email || '';
+        roleSelect.value = savedUser.role || '';
+        rememberMeCheckbox.checked = true;
+      }
+
+      // Password visibility toggle
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      // Show status message
+      function showStatus(message, isError = false) {
+        loginStatus.textContent = message;
+        loginStatus.className = `login-status ${isError ? 'error' : 'success'}`;
+        loginStatus.style.display = 'block';
+      }
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        try {
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+          const role = roleSelect.value;
+
+          if (!email || !password || !role) {
+            showStatus('Please fill in all fields', true);
+            return;
+          }
+
+          // Sign in with Firebase Authentication
+          const userCredential = await window.signInWithEmailAndPassword(window.auth, email, password);
+          const user = userCredential.user;
+          console.log("Login form submit: User successfully authenticated. UID:", user.uid);
+
+          // Get user data from Firestore
+          const userDoc = await window.getDoc(window.doc(window.db, "users", user.uid));
+          
+          if (!userDoc.exists()) {
+            console.error("Login: User document does not exist in Firestore for UID:", user.uid);
+            showStatus('User profile not found. Please ensure you have signed up correctly and your Firestore rules allow data access.', true);
+            return;
+          }
+
+          const userData = userDoc.data();
+
+          if (!userData) {
+            // This case should theoretically not happen if userDoc.exists() is true, but as a fallback
+            showStatus('User data not found or empty. Please contact support.', true);
+            return;
+          }
+
+          // Verify role matches
+          if (userData.role !== role) {
+            showStatus('Invalid role selected', true);
+            return;
+          }
+
+          // Store user info in localStorage
+          const userInfo = {
+            uid: user.uid,
+            fullName: userData.fullName,
+            email: userData.email,
+            role: userData.role,
+            lastLogin: new Date().toISOString()
+          };
+          
+          localStorage.setItem('user', JSON.stringify(userInfo));
+          localStorage.setItem('userLoggedIn', 'true');
+
+          // Save credentials if remember me is checked
+          if (rememberMeCheckbox.checked) {
+            localStorage.setItem('savedUser', JSON.stringify(userInfo));
+          } else {
+            localStorage.removeItem('savedUser');
+          }
+
+          showStatus('Login successful! Redirecting...', false);
+
+          // Check for redirect URL from session storage
+          const redirectUrl = sessionStorage.getItem('redirectUrl');
+          sessionStorage.removeItem('redirectUrl');
+
+          // Redirect based on role after a short delay
+          setTimeout(() => {
+            if (redirectUrl) {
+              window.location.href = redirectUrl;
+            } else {
+              window.location.href = userData.role === 'mentor' ? 'mentor.html' :
+                                   userData.role === 'investor' ? 'funds.html' : 
+                                   'index.html';
+            }
+          }, 1500);
+
+        } catch (error) {
+          console.error('Login error:', error);
+          if (error.code === 'auth/user-not-found') {
+            showStatus('No account found with this email', true);
+          } else if (error.code === 'auth/wrong-password') {
+            showStatus('Invalid password', true);
+          } else if (error.code === 'auth/invalid-email') {
+            showStatus('Invalid email format', true);
+          } else if (error.code === 'auth/invalid-credential') {
+            showStatus('Invalid email or password', true);
+          } else {
+            showStatus('An error occurred during login. Please try again.', true);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

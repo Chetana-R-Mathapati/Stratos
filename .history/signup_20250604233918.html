@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratos - Sign Up</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    
+    <!-- Shared Firebase Configuration -->
+    <script src="js/firebase-config.js"></script>
+</head>
+<body>
+    <div class="signup-container">
+        <h1>Create Account</h1>
+        <form id="signup-form">
+            <div class="form-group">
+                <input type="text" id="fullname" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            </div>
+            <div class="form-group">
+                <select id="user-type" required>
+                    <option value="">Select User Type</option>
+                    <option value="entrepreneur">Entrepreneur</option>
+                    <option value="investor">Investor</option>
+                    <option value="mentor">Mentor</option>
+                </select>
+            </div>
+            <button type="submit">Create Account</button>
+            <div class="form-links">
+                <span>Already have an account?</span>
+                <a href="login.html">Login</a>
+            </div>
+        </form>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <script>
+        // Handle signup form submission
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const userType = document.getElementById('user-type').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                // Create user account
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                
+                // Create user profile in database
+                await FirebaseSync.syncData('users', {
+                    uid: userCredential.user.uid,
+                    fullname,
+                    email,
+                    userType,
+                    createdAt: Date.now(),
+                    lastLogin: Date.now()
+                });
+
+                // Store user data in localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    uid: userCredential.user.uid,
+                    email,
+                    fullname,
+                    userType
+                }));
+
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Signup error:', error);
+                errorMessage.textContent = getErrorMessage(error.code);
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Error message helper
+        function getErrorMessage(errorCode) {
+            switch (errorCode) {
+                case 'auth/email-already-in-use':
+                    return 'An account with this email already exists.';
+                case 'auth/invalid-email':
+                    return 'Invalid email address format.';
+                case 'auth/operation-not-allowed':
+                    return 'Email/password accounts are not enabled.';
+                case 'auth/weak-password':
+                    return 'Password is too weak. Please use at least 6 characters.';
+                default:
+                    return 'An error occurred during signup. Please try again.';
+            }
+        }
+
+        // Check if user is already logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html> 

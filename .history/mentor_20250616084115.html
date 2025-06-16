@@ -275,42 +275,15 @@
     let investorsData = [];
     let mentorsData = [];
 
-    // Listen for authentication state changes
+    // --- ADD THIS BLOCK FOR DEBUGGING ---
     auth.onAuthStateChanged(user => {
         if (user) {
             console.log("mentor.html: User is authenticated. UID:", user.uid, "Email:", user.email);
-            
-            // --- MOVE Firestore LISTENERS HERE ---
-            // Real-time listener for 'investors' collection
-            onSnapshot(collection(db, "investors"), (snapshot) => {
-                investorsData = []; // Clear current data
-                snapshot.forEach(doc => {
-                    investorsData.push({ id: doc.id, ...doc.data() });
-                });
-                renderCombinedData(); // Re-render with updated investor data
-            }, (error) => {
-                console.error("Error loading investors from Firebase:", error);
-                investorList.innerHTML = '<p style="color:red;">Error loading investors.</p>';
-            });
-
-            // Real-time listener for 'mentors' collection
-            onSnapshot(collection(db, "mentors"), (snapshot) => {
-                mentorsData = []; // Clear current data
-                snapshot.forEach(doc => {
-                    mentorsData.push({ id: doc.id, ...doc.data() });
-                });
-                renderCombinedData(); // Re-render with updated mentor data
-            }, (error) => {
-                console.error("Error loading mentors from Firebase:", error);
-                // You might want a different error message or log for mentors
-            });
-            // --- END MOVED LISTENERS ---
-
         } else {
-            console.log("mentor.html: User is NOT authenticated. Hiding content.");
-            investorList.innerHTML = '<p style="text-align: center; margin-top: 50px;">Please log in to view mentors and investors.</p>';
+            console.log("mentor.html: User is NOT authenticated.");
         }
     });
+    // --- END DEBUGGING BLOCK ---
 
     // Function to create an investor/mentor card
     function createPersonCard(person) {
@@ -348,6 +321,30 @@
         filtered.forEach(item => investorList.appendChild(createPersonCard(item)));
       }
     }
+
+    // Real-time listener for 'investors' collection
+    onSnapshot(collection(db, "investors"), (snapshot) => {
+      investorsData = []; // Clear current data
+      snapshot.forEach(doc => {
+        investorsData.push({ id: doc.id, ...doc.data() }); // Include doc.id if needed
+      });
+      renderCombinedData(); // Re-render with updated investor data
+    }, (error) => {
+      console.error("Error loading investors from Firebase:", error);
+      investorList.innerHTML = '<p style="color:red;">Error loading investors.</p>';
+    });
+
+    // Real-time listener for 'mentors' collection
+    onSnapshot(collection(db, "mentors"), (snapshot) => {
+      mentorsData = []; // Clear current data
+      snapshot.forEach(doc => {
+        mentorsData.push({ id: doc.id, ...doc.data() }); // Include doc.id if needed
+      });
+      renderCombinedData(); // Re-render with updated mentor data
+    }, (error) => {
+      console.error("Error loading mentors from Firebase:", error);
+      // You might want a different error message or log for mentors
+    });
 
     // Add event listener for domain filter
     domainFilter.addEventListener('change', renderCombinedData);

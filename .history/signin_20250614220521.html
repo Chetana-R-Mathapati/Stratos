@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login/Signup - Red Bus Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --redbus-red: #d84e55;
+      --redbus-dark-red: #bb3f44;
+      --redbus-light-grey: #f5f5f5;
+      --redbus-text-color: #333;
+      --redbus-placeholder-color: #999;
+      --redbus-border-color: #ddd;
+    }
+
+    body {
+      background-color: var(--redbus-light-grey);
+      font-family: 'Open Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .auth-container {
+      background: #fff;
+      border-radius: 8px;
+      padding: 30px 40px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .auth-header {
+      margin-bottom: 30px;
+    }
+
+    .auth-header h2 {
+      font-size: 2.2rem;
+      color: var(--redbus-red);
+      margin-bottom: 10px;
+    }
+
+    .auth-header p {
+      font-size: 0.9rem;
+      color: var(--redbus-text-color);
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: var(--redbus-text-color);
+      font-weight: 600;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--redbus-border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+      color: var(--redbus-text-color);
+      background-color: #fff;
+      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .input-group input::placeholder,
+    .input-group textarea::placeholder {
+      color: var(--redbus-placeholder-color);
+    }
+
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      border-color: var(--redbus-red);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(216, 78, 85, 0.2);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 42px; /* Adjust as needed based on label height */
+      cursor: pointer;
+      color: var(--redbus-placeholder-color);
+      font-size: 0.9rem;
+      transition: color 0.2s ease-in-out;
+    }
+
+    .password-toggle:hover {
+      color: var(--redbus-red);
+    }
+
+    .password-strength {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--redbus-placeholder-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .strength-meter {
+      flex-grow: 1;
+      height: 4px;
+      background: var(--redbus-border-color);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .strength-meter div {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+
+    .weak { background: #ff4444; }
+    .medium { background: #ffbb33; }
+    .strong { background: #00C851; }
+
+    .terms-group {
+      margin: 20px 0 30px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--redbus-text-color);
+    }
+
+    .terms-group input[type="checkbox"] {
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .terms-group a {
+      color: var(--redbus-red);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .terms-group a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-redbus {
+      width: 100%;
+      padding: 14px;
+      background: var(--redbus-red);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out, transform 0.1s ease-in-out;
+    }
+
+    .btn-redbus:hover:not(:disabled) {
+      background: var(--redbus-dark-red);
+      transform: translateY(-1px);
+    }
+
+    .btn-redbus:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-redbus:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .form-status {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .form-status.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .form-status.error {
+      background-color: #fcebeb; /* Light red */
+      color: #cc0000; /* Darker red */
+      border: 1px solid #ebcccc;
+    }
+
+    .form-status.success {
+      background-color: #e6ffe6; /* Light green */
+      color: #008000; /* Darker green */
+      border: 1px solid #ccffcc;
+    }
+
+    /* Tabs for Login/Signup */
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--redbus-border-color);
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 12px 0;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--redbus-placeholder-color);
+      cursor: pointer;
+      transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    }
+
+    .tab-button.active {
+      color: var(--redbus-red);
+      border-bottom-color: var(--redbus-red);
+    }
+
+    .tab-button:hover {
+      color: var(--redbus-red);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Role-specific details (similar to previous signin.html) */
+    #mentorDetails, #investorDetails, #securityQuestions {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(216, 78, 85, 0.05); /* Light red background */
+      border-radius: 8px;
+      border: 1px solid rgba(216, 78, 85, 0.2);
+      text-align: left; /* Align labels/inputs left */
+    }
+
+    #mentorDetails textarea, #investorDetails textarea {
+      resize: vertical;
+    }
+
+    .image-upload-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .image-preview {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--redbus-border-color);
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .upload-btn {
+      background: var(--redbus-dark-red);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s ease;
+    }
+
+    .upload-btn:hover {
+      background: var(--redbus-red);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h2>Stratos</h2>
+      <p>Your Gateway to Innovation</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-button active" data-tab="login">Login</button>
+      <button class="tab-button" data-tab="signup">Sign Up</button>
+    </div>
+
+    <div id="formStatus" class="form-status"></div>
+
+    <!-- Login Tab Content -->
+    <div id="loginTab" class="tab-content active">
+      <form id="loginForm" novalidate>
+        <div class="input-group">
+          <label for="loginUsername">Username / Email</label>
+          <input type="text" id="loginUsername" name="username" placeholder="Enter your username or email" required>
+        </div>
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+          <i class="password-toggle fas fa-eye" id="toggleLoginPassword"></i>
+        </div>
+        <a href="forgot-password.html" class="forgot-password" style="display: block; text-align: right; font-size: 0.9rem; color: #666; margin-bottom: 20px;">Forgot Password?</a>
+        <button type="submit" class="btn-redbus">Login</button>
+      </form>
+    </div>
+
+    <!-- Signup Tab Content -->
+    <div id="signupTab" class="tab-content">
+      <form id="signupForm" novalidate>
+        <div class="input-group">
+          <label for="signupUsername">Username</label>
+          <input type="text" id="signupUsername" name="username" placeholder="Choose a unique username" required>
+        </div>
+        <div class="input-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" name="email" placeholder="Enter your email address" required>
+        </div>
+        <div class="input-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" name="password" placeholder="Create a strong password" required>
+          <i class="password-toggle fas fa-eye" id="toggleSignupPassword"></i>
+          <div class="password-strength">
+            <div class="strength-meter">
+              <div id="strengthBar"></div>
+            </div>
+            <span id="strengthText">Password strength</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="confirmSignupPassword">Confirm Password</label>
+          <input type="password" id="confirmSignupPassword" name="confirmPassword" placeholder="Re-enter your password" required>
+          <i class="password-toggle fas fa-eye" id="toggleConfirmSignupPassword"></i>
+        </div>
+        <div class="input-group">
+          <label for="signupRole">Role</label>
+          <select id="signupRole" name="role" required>
+            <option value="">Select your role</option>
+            <option value="user">User</option>
+            <option value="mentor">Mentor</option>
+            <option value="investor">Investor</option>
+          </select>
+        </div>
+
+        <!-- Security Questions (Required by server.js) -->
+        <div id="securityQuestions" style="display: block;">
+          <h3>Security Questions</h3>
+          <p style="font-size: 0.85rem; color: #555;">Please provide answers to two security questions in case you forget your password.</p>
+          <div class="input-group">
+            <label for="securityQ1">Question 1</label>
+            <select id="securityQ1" name="securityQ1" required>
+              <option value="">Select a question</option>
+              <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+              <option value="What was your first pet's name?">What was your first pet's name?</option>
+              <option value="What is the city where you were born?">What is the city where you were born?</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="securityA1">Answer 1</label>
+            <input type="text" id="securityA1" name="securityA1" required>
+          </div>
+          <div class="input-group">
+            <label for="securityQ2">Question 2</label>
+            <select id="securityQ2" name="securityQ2" required>
+              <option value="">Select a question</option>
+              <option value="What was the make and model of your first car?">What was the make and model of your first car?</option>
+              <option value="What is your favorite book?">What is your favorite book?</option>
+              <option value="What is your favorite movie?">What is your favorite movie?</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="securityA2">Answer 2</label>
+            <input type="text" id="securityA2" name="securityA2" required>
+          </div>
+        </div>
+
+        <!-- Mentor Details -->
+        <div id="mentorDetails" style="display: none;">
+          <h3>Mentor Profile</h3>
+          <div class="input-group">
+            <label for="mentorDomain">Domain</label>
+            <select id="mentorDomain" name="mentorDomain" required>
+              <option value="">Select a domain</option>
+              <option value="Finance">Finance</option>
+              <option value="Tech">Tech</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Wellness">Wellness</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="mentorSector">Sector</label>
+            <input type="text" id="mentorSector" name="mentorSector" placeholder="e.g., AI, Fintech, Biotechnology" required>
+          </div>
+          <div class="input-group">
+            <label for="mentorImage">Profile Image</label>
+            <div class="image-upload-container">
+              <input type="file" id="mentorImage" name="mentorImage" accept="image/*" style="display: none;">
+              <div class="image-preview" id="imagePreview">
+                <img id="previewImg" src="https://placehold.co/150x150/EEEEEE/999999?text=Upload+Image" alt="Preview">
+              </div>
+              <button type="button" class="upload-btn" id="uploadBtn">Choose Image</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="mentorBio">Bio</label>
+            <textarea id="mentorBio" name="mentorBio" rows="3" placeholder="Brief description about yourself and your expertise" required></textarea>
+          </div>
+        </div>
+
+        <!-- Investor Details -->
+        <div id="investorDetails" style="display: none;">
+          <h3>Investor Profile</h3>
+          <div class="input-group">
+            <label for="investorOccupation">Occupation/Position</label>
+            <input type="text" id="investorOccupation" name="investorOccupation" placeholder="e.g., Venture Capitalist, Angel Investor" required>
+          </div>
+          <div class="input-group">
+            <label for="investorImage">Profile Image</label>
+            <div class="image-upload-container">
+              <input type="file" id="investorImage" name="investorImage" accept="image/*" style="display: none;">
+              <div class="image-preview" id="investorImagePreview">
+                <img id="investorPreviewImg" src="https://placehold.co/150x150/EEEEEE/999999?text=Upload+Image" alt="Preview">
+              </div>
+              <button type="button" class="upload-btn" id="investorUploadBtn">Choose Image</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="investorBio">Bio</label>
+            <textarea id="investorBio" name="investorBio" rows="3" placeholder="Brief description about yourself and your investment interests" required></textarea>
+          </div>
+        </div>
+
+        <div class="terms-group">
+          <input type="checkbox" id="terms" name="terms" required>
+          <label for="terms">
+            I agree to the <a href="#" target="_blank">Terms & Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+          </label>
+        </div>
+        <button type="submit" class="btn-redbus" id="signupSubmitBtn" disabled>Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const formStatusDiv = document.getElementById('formStatus');
+
+      // Utility function to display form status messages
+      function showFormStatus(message, isError = false) {
+        formStatusDiv.textContent = message;
+        formStatusDiv.className = `form-status active ${isError ? 'error' : 'success'}`;
+        // Hide after 5 seconds
+        setTimeout(() => {
+          formStatusDiv.classList.remove('active');
+        }, 5000);
+      }
+
+      // --- Tab Switching Logic ---
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const tab = button.dataset.tab;
+
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          tabContents.forEach(content => content.classList.remove('active'));
+          document.getElementById(tab + 'Tab').classList.add('active');
+
+          // Clear form status when switching tabs
+          formStatusDiv.classList.remove('active');
+          formStatusDiv.textContent = '';
+
+          // Reset forms when switching tabs (optional, but good for clean state)
+          document.getElementById('loginForm').reset();
+          document.getElementById('signupForm').reset();
+          resetFormValidation(document.getElementById('loginForm'));
+          resetFormValidation(document.getElementById('signupForm'));
+          
+          // Re-evaluate signup form validity if it becomes active
+          if (tab === 'signup') {
+            checkSignupFormValidity();
+          }
+        });
+      });
+
+      function resetFormValidation(formElement) {
+        formElement.querySelectorAll('.input-group').forEach(group => {
+            group.classList.remove('error', 'success');
+        });
+        formElement.querySelectorAll('.error-message').forEach(errorMsg => {
+            errorMsg.textContent = '';
+            errorMsg.style.display = 'none';
+        });
+        const passwordStrengthBar = formElement.querySelector('#strengthBar');
+        const passwordStrengthText = formElement.querySelector('#strengthText');
+        if (passwordStrengthBar) {
+            passwordStrengthBar.style.width = '0%';
+            passwordStrengthBar.className = '';
+        }
+        if (passwordStrengthText) {
+            passwordStrengthText.textContent = 'Password strength';
+        }
+        // Reset image previews to placeholder
+        const imgPreviews = formElement.querySelectorAll('.image-preview img');
+        imgPreviews.forEach(img => {
+            img.src = "https://placehold.co/150x150/EEEEEE/999999?text=Upload+Image";
+        });
+        const termsCheckbox = formElement.querySelector('#terms');
+        if(termsCheckbox) {
+            termsCheckbox.checked = false;
+        }
+      }
+
+
+      // --- Login Form Logic ---
+      const loginForm = document.getElementById('loginForm');
+      const loginUsernameInput = document.getElementById('loginUsername');
+      const loginPasswordInput = document.getElementById('loginPassword');
+      const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+
+      toggleLoginPassword.addEventListener('click', function() {
+        const type = loginPasswordInput.type === 'password' ? 'text' : 'password';
+        loginPasswordInput.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      loginForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const username = loginUsernameInput.value.trim();
+        const password = loginPasswordInput.value.trim();
+
+        if (!username || !password) {
+          showFormStatus('Please enter both username/email and password.', true);
+          return;
+        }
+
+        try {
+          const response = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showFormStatus('Login successful! Redirecting...', false);
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+
+            // Redirect based on role
+            setTimeout(() => {
+                const userRole = data.user.role;
+                if (userRole === 'mentor') {
+                    window.location.href = 'mentor.html'; // Assuming this page exists
+                } else if (userRole === 'investor') {
+                    window.location.href = 'funds.html'; // Assuming this page exists
+                } else {
+                    window.location.href = 'index.html'; // Default user page
+                }
+            }, 1500);
+
+          } else {
+            showFormStatus(data.error || 'Login failed. Please check your credentials.', true);
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          showFormStatus('An error occurred during login. Please try again.', true);
+        }
+      });
+
+      // --- Signup Form Logic (Integrated from previous signin.html) ---
+      const signupForm = document.getElementById('signupForm');
+      const signupUsernameInput = document.getElementById('signupUsername');
+      const signupEmailInput = document.getElementById('signupEmail');
+      const signupPasswordInput = document.getElementById('signupPassword');
+      const confirmSignupPasswordInput = document.getElementById('confirmSignupPassword');
+      const strengthBar = document.getElementById('strengthBar');
+      const strengthText = document.getElementById('strengthText');
+      const signupRoleSelect = document.getElementById('signupRole');
+      const securityQ1 = document.getElementById('securityQ1');
+      const securityA1 = document.getElementById('securityA1');
+      const securityQ2 = document.getElementById('securityQ2');
+      const securityA2 = document.getElementById('securityA2');
+      const mentorDetailsDiv = document.getElementById('mentorDetails');
+      const investorDetailsDiv = document.getElementById('investorDetails');
+      const termsCheckbox = document.getElementById('terms');
+      const signupSubmitBtn = document.getElementById('signupSubmitBtn');
+
+      // Password visibility for signup form
+      document.getElementById('toggleSignupPassword').addEventListener('click', function() {
+        const type = signupPasswordInput.type === 'password' ? 'text' : 'password';
+        signupPasswordInput.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+      document.getElementById('toggleConfirmSignupPassword').addEventListener('click', function() {
+        const type = confirmSignupPasswordInput.type === 'password' ? 'text' : 'password';
+        confirmSignupPasswordInput.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      // Password strength checker (same logic as before)
+      function checkPasswordStrength(password) {
+        let strength = 0;
+        const patterns = {
+          length: password.length >= 8,
+          lowercase: /[a-z]/.test(password),
+          uppercase: /[A-Z]/.test(password),
+          numbers: /\d/.test(password),
+          special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+        strength += patterns.length ? 1 : 0;
+        strength += (patterns.lowercase && patterns.uppercase) ? 1 : 0;
+        strength += patterns.numbers ? 1 : 0;
+        strength += patterns.special ? 1 : 0;
+        return { score: strength, patterns };
+      }
+
+      function updatePasswordStrengthDisplay() {
+        const password = signupPasswordInput.value;
+        const { score } = checkPasswordStrength(password);
+        let width = (score / 4) * 100;
+        let strengthClass = '';
+        let text = 'Password strength';
+
+        if (password.length === 0) {
+            strengthClass = '';
+            width = 0;
+        } else if (score === 1) {
+            strengthClass = 'weak';
+            text = 'Weak';
+        } else if (score === 2) {
+            strengthClass = 'medium';
+            text = 'Medium';
+        } else if (score >= 3) {
+            strengthClass = 'strong';
+            text = 'Strong';
+        }
+        strengthBar.className = strengthClass;
+        strengthBar.style.width = `${width}%`;
+        strengthText.textContent = text;
+        return score >= 3; // Return true if strong enough for submission
+      }
+      signupPasswordInput.addEventListener('input', updatePasswordStrengthDisplay);
+
+
+      // Validation helpers for individual fields (updated for Red Bus style and general use)
+      function validateField(inputElement) {
+        const value = inputElement.value.trim();
+        let isValid = true;
+        let errorMessage = '';
+
+        // Clear previous state
+        const inputGroup = inputElement.closest('.input-group');
+        if (inputGroup) {
+            inputGroup.classList.remove('error', 'success');
+            const errorElement = inputGroup.querySelector('.field-error-message');
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.style.display = 'none';
+            }
+        }
+        // Specific handling for checkbox's error message location
+        if (inputElement === termsCheckbox) {
+            const errorElement = document.getElementById('termsError');
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.style.display = 'none';
+            }
+        }
+
+        if (inputElement.hasAttribute('required') && value === '' && inputElement.type !== 'file') {
+            errorMessage = 'This field is required.';
+            isValid = false;
+        } else {
+            switch (inputElement.id) {
+                case 'signupUsername':
+                    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                    if (!usernameRegex.test(value)) {
+                        errorMessage = 'Username must be 3-20 characters, alphanumeric with underscore.';
+                        isValid = false;
+                    }
+                    break;
+                case 'signupEmail':
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) {
+                        errorMessage = 'Please enter a valid email address.';
+                        isValid = false;
+                    }
+                    break;
+                case 'signupPassword':
+                    if (!updatePasswordStrengthDisplay()) { // Checks if password is strong enough
+                        errorMessage = 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.';
+                        isValid = false;
+                    }
+                    break;
+                case 'confirmSignupPassword':
+                    if (value !== signupPasswordInput.value.trim()) {
+                        errorMessage = 'Passwords do not match.';
+                        isValid = false;
+                    }
+                    break;
+                case 'signupRole':
+                    if (value === '') {
+                        errorMessage = 'Please select a role.';
+                        isValid = false;
+                    }
+                    break;
+                case 'securityQ1':
+                case 'securityQ2':
+                    if (value === '') {
+                        errorMessage = 'Please select a question.';
+                        isValid = false;
+                    }
+                    break;
+                // For security answers, mentor/investor details, generic required check covers them
+                case 'mentorImage':
+                case 'investorImage':
+                    // Image upload validation (e.g., file size, type)
+                    const file = inputElement.files[0];
+                    if (file) {
+                        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+                        if (file.size > MAX_SIZE) {
+                            errorMessage = 'Image size must be less than 5MB.';
+                            isValid = false;
+                        }
+                        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                        if (!allowedTypes.includes(file.type)) {
+                            errorMessage = 'Only JPG, PNG, GIF images are allowed.';
+                            isValid = false;
+                        }
+                    }
+                    // If image is required and not uploaded
+                    // if (inputElement.hasAttribute('required') && !file) {
+                    //     errorMessage = 'Please upload a profile image.';
+                    //     isValid = false;
+                    // }
+                    break;
+            }
+        }
+
+        if (!isValid) {
+            const inputGroup = inputElement.closest('.input-group');
+            if (inputGroup) inputGroup.classList.add('error');
+            let errorElement = inputGroup ? inputGroup.querySelector('.field-error-message') : null;
+            if (!errorElement) { // Create error message div if it doesn't exist within input-group
+                errorElement = document.createElement('div');
+                errorElement.className = 'field-error-message error-message';
+                if (inputGroup) inputGroup.appendChild(errorElement);
+                else inputElement.after(errorElement); // Fallback for elements not in input-group
+            }
+            errorElement.textContent = errorMessage;
+            errorElement.style.display = 'block';
+        } else {
+            const inputGroup = inputElement.closest('.input-group');
+            if (inputGroup) inputGroup.classList.add('success');
+            const errorElement = inputGroup ? inputGroup.querySelector('.field-error-message') : null;
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.style.display = 'none';
+            }
+        }
+        return isValid;
+      }
+
+      // Add field-error-message divs dynamically if they don't exist
+      signupForm.querySelectorAll('input, select, textarea').forEach(input => {
+          if (input.id && !document.getElementById(input.id + 'Error')) {
+              const errorDiv = document.createElement('div');
+              errorDiv.className = 'field-error-message error-message';
+              errorDiv.id = input.id + 'Error';
+              input.after(errorDiv); // Place error div after the input
+          }
+      });
+      // Special case for terms checkbox error
+      if (!document.getElementById('termsError')) {
+          const termsLabel = termsCheckbox.closest('.terms-group');
+          if (termsLabel) {
+              const errorDiv = document.createElement('div');
+              errorDiv.className = 'field-error-message error-message';
+              errorDiv.id = 'termsError';
+              termsLabel.appendChild(errorDiv);
+          }
+      }
+
+
+      // Event listeners for real-time validation on input/blur
+      signupForm.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(input => {
+        input.addEventListener('input', () => {
+          validateField(input);
+          checkSignupFormValidity();
+        });
+        input.addEventListener('blur', () => {
+          validateField(input);
+          checkSignupFormValidity();
+        });
+      });
+      termsCheckbox.addEventListener('change', () => {
+        validateField(termsCheckbox); // Validate checkbox itself
+        checkSignupFormValidity();
+      });
+
+      // Show/hide role-specific details based on role selection
+      signupRoleSelect.addEventListener('change', function() {
+        mentorDetailsDiv.style.display = 'none';
+        investorDetailsDiv.style.display = 'none';
+        
+        // Remove 'required' from all role-specific inputs initially
+        document.querySelectorAll('#mentorDetails input, #mentorDetails select, #mentorDetails textarea, #investorDetails input, #investorDetails textarea').forEach(el => {
+            el.removeAttribute('required');
+        });
+
+        if (this.value === 'mentor') {
+          mentorDetailsDiv.style.display = 'block';
+          // Set required for mentor fields
+          mentorDetailsDiv.querySelectorAll('input, select, textarea').forEach(el => el.setAttribute('required', 'required'));
+        } else if (this.value === 'investor') {
+          investorDetailsDiv.style.display = 'block';
+          // Set required for investor fields
+          investorDetailsDiv.querySelectorAll('input, textarea').forEach(el => el.setAttribute('required', 'required'));
+        }
+        checkSignupFormValidity(); // Re-check form validity after role change
+      });
+
+      // Handle image uploads for mentor
+      document.getElementById('uploadBtn').addEventListener('click', () => mentorImageInput.click());
+      document.getElementById('imagePreview').addEventListener('click', () => mentorImageInput.click()); // Click preview to open file dialog
+      mentorImageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImg.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+            previewImg.src = "https://placehold.co/150x150/EEEEEE/999999?text=Upload+Image"; // Reset to placeholder if no file
+        }
+        validateField(this); // Validate the image input
+        checkSignupFormValidity();
+      });
+
+      // Handle image uploads for investor
+      document.getElementById('investorUploadBtn').addEventListener('click', () => investorImageInput.click());
+      document.getElementById('investorImagePreview').addEventListener('click', () => investorImageInput.click()); // Click preview to open file dialog
+      investorImageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            investorPreviewImg.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+            investorPreviewImg.src = "https://placehold.co/150x150/EEEEEE/999999?text=Upload+Image"; // Reset to placeholder if no file
+        }
+        validateField(this); // Validate the image input
+        checkSignupFormValidity();
+      });
+
+
+      function checkSignupFormValidity() {
+        let allValid = true;
+        
+        // Validate all relevant inputs
+        const inputsToCheck = [
+          signupUsernameInput, signupEmailInput, signupPasswordInput, confirmSignupPasswordInput,
+          signupRoleSelect, securityQ1, securityA1, securityQ2, securityA2, termsCheckbox
+        ];
+        
+        inputsToCheck.forEach(input => {
+            if (input && !validateField(input)) {
+                allValid = false;
+            }
+        });
+
+        // Validate role-specific fields only if visible and marked required
+        const currentRole = signupRoleSelect.value;
+        if (currentRole === 'mentor' && mentorDetailsDiv.style.display === 'block') {
+            ['mentorDomain', 'mentorSector', 'mentorBio'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input && !validateField(input)) { // validateField will check 'required' attribute
+                    allValid = false;
+                }
+            });
+            // if (mentorImageInput.hasAttribute('required') && mentorImageInput.files.length === 0) {
+            //     allValid = false;
+            //     showError(mentorImageInput, 'Please upload a profile image.');
+            // }
+        } else if (currentRole === 'investor' && investorDetailsDiv.style.display === 'block') {
+            ['investorOccupation', 'investorBio'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input && !validateField(input)) { // validateField will check 'required' attribute
+                    allValid = false;
+                }
+            });
+            // if (investorImageInput.hasAttribute('required') && investorImageInput.files.length === 0) {
+            //     allValid = false;
+            //     showError(investorImageInput, 'Please upload a profile image.');
+            // }
+        }
+        
+        signupSubmitBtn.disabled = !allValid;
+        return allValid;
+      }
+
+      signupForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        if (!checkSignupFormValidity()) {
+          showFormStatus('Please correct the errors in the form before submitting.', true);
+          return;
+        }
+
+        const username = signupUsernameInput.value.trim();
+        const email = signupEmailInput.value.trim();
+        const password = signupPasswordInput.value.trim();
+        const role = signupRoleSelect.value;
+
+        const securityQuestions = [
+          { question: securityQ1.value, answer: securityA1.value.trim() },
+          { question: securityQ2.value, answer: securityA2.value.trim() }
+        ];
+
+        const formData = { username, email, password, role, securityQuestions };
+
+        if (role === 'mentor') {
+          formData.mentorDetails = {
+            domain: document.getElementById('mentorDomain').value,
+            sector: document.getElementById('mentorSector').value.trim(),
+            bio: document.getElementById('mentorBio').value.trim(),
+          };
+        } else if (role === 'investor') {
+          formData.investorDetails = {
+            occupation: document.getElementById('investorOccupation').value.trim(),
+            bio: document.getElementById('investorBio').value.trim(),
+          };
+        }
+
+        try {
+          const response = await fetch('http://localhost:3000/signup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showFormStatus('Account created successfully! Redirecting...', false);
+            setTimeout(() => {
+              window.location.href = 'login.html'; // Redirect back to the unified login page
+            }, 3000);
+          } else {
+            let errorMessage = data.error || 'Signup failed.';
+            if (data.errors && data.errors.length > 0) {
+              errorMessage = data.errors.join('<br>');
+            }
+            showFormStatus(errorMessage, true);
+          }
+        } catch (error) {
+          console.error('Signup error:', error);
+          showFormStatus('An error occurred during signup. Please try again.', true);
+        }
+      });
+
+      // Initial check for signup form validity on page load
+      checkSignupFormValidity();
+    });
+  </script>
+</body>
+</html>

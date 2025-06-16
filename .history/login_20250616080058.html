@@ -252,8 +252,6 @@
       const loginStatus = document.getElementById('loginStatus');
       const rememberMeCheckbox = document.getElementById('rememberMe');
       const togglePassword = document.getElementById('togglePassword');
-      const loginBtn = document.querySelector('.login-btn');
-      let isProcessing = false; // Add flag to track login state
 
       // Load saved credentials if available
       const savedUser = JSON.parse(localStorage.getItem('savedUser'));
@@ -278,23 +276,8 @@
         loginStatus.style.display = 'block';
       }
 
-      // Set loading state
-      function setLoading(isLoading) {
-        isProcessing = isLoading;
-        loginBtn.disabled = isLoading;
-        loginBtn.textContent = isLoading ? 'Logging in...' : 'Login';
-        if (isLoading) {
-          loginBtn.style.opacity = '0.7';
-        } else {
-          loginBtn.style.opacity = '1';
-        }
-      }
-
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
-
-        if (isProcessing) return; // Prevent multiple submissions
-        setLoading(true);
 
         try {
           // Sign in with Firebase
@@ -305,6 +288,12 @@
           );
 
           const user = userCredential.user;
+
+          // Check if email is verified
+          if (!user.emailVerified) {
+            showStatus('Please verify your email before logging in', true);
+            return;
+          }
 
           // Get user role from Firestore
           const usersRef = collection(db, "users");
@@ -317,7 +306,6 @@
             // Verify role matches
             if (userData.role !== roleSelect.value) {
               showStatus('Invalid role selected', true);
-              setLoading(false);
               return;
             }
 
@@ -331,7 +319,6 @@
             };
             
             sessionStorage.setItem('user', JSON.stringify(sessionData));
-            localStorage.setItem('userLoggedIn', 'true');
 
             // Save credentials if remember me is checked
             if (rememberMeCheckbox.checked) {
@@ -358,11 +345,10 @@
                                      userData.role === 'investor' ? 'funds.html' : 
                                      'index.html';
               }
-            }, 2000); // Increased delay to 2 seconds
+            }, 1500);
 
           } else {
             showStatus('User data not found', true);
-            setLoading(false);
           }
 
         } catch (error) {
@@ -387,14 +373,12 @@
           }
           
           showStatus(errorMessage, true);
-          setLoading(false);
         }
       });
 
-      // Modified auth state change listener
-      let isFirstLoad = true;
+      // Check if user is already logged in
       onAuthStateChanged(auth, async (user) => {
-        if (user && !isFirstLoad) { // Only redirect if not first load
+        if (user) {
           try {
             // Get user role from Firestore
             const usersRef = collection(db, "users");
@@ -413,7 +397,6 @@
             console.error('Error checking user role:', error);
           }
         }
-        isFirstLoad = false;
       });
     });
   </script>

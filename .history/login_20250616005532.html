@@ -7,12 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   
-  <!-- Firebase SDK -->
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -35,10 +34,45 @@
     window.db = db;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
     window.onAuthStateChanged = onAuthStateChanged;
-    window.query = query;
-    window.where = where;
-    window.getDocs = getDocs;
-    window.collection = collection;
+    window.doc = doc;
+    window.getDoc = getDoc;
+
+    // Check if user is already logged in
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("Login: onAuthStateChanged - User found. UID:", user.uid);
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          console.log("Login: Attempting to fetch user document from Firestore:", userDocRef.path);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (userDoc.exists()) {
+            console.log("Login: userDoc.exists() returned TRUE. Proceeding with data retrieval.");
+            const userData = userDoc.data();
+            console.log("Login: Retrieved userData:", userData);
+            if (userData) {
+              if (userData.role === 'mentor') {
+                window.location.href = 'mentor.html';
+              } else if (userData.role === 'investor') {
+                window.location.href = 'funds.html';
+              } else {
+                window.location.href = 'index.html';
+              }
+            } else {
+              console.error("Login: userData is null or undefined despite userDoc.exists() being true.");
+              showStatus('User data found but empty. Please contact support.', true);
+              return;
+            }
+          } else {
+            console.error("Login: userDoc.exists() returned FALSE for UID:", user.uid);
+            showStatus('User profile not found. Please ensure you have signed up correctly and your Firestore rules allow data access.', true);
+            return;
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+        }
+      }
+    });
   </script>
   
   <style>
@@ -243,7 +277,7 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('loginForm');
       const emailInput = document.getElementById('email');
@@ -252,8 +286,6 @@
       const loginStatus = document.getElementById('loginStatus');
       const rememberMeCheckbox = document.getElementById('rememberMe');
       const togglePassword = document.getElementById('togglePassword');
-      const loginBtn = document.querySelector('.login-btn');
-      let isProcessing = false; // Add flag to track login state
 
       // Load saved credentials if available
       const savedUser = JSON.parse(localStorage.getItem('savedUser'));
@@ -278,142 +310,97 @@
         loginStatus.style.display = 'block';
       }
 
-      // Set loading state
-      function setLoading(isLoading) {
-        isProcessing = isLoading;
-        loginBtn.disabled = isLoading;
-        loginBtn.textContent = isLoading ? 'Logging in...' : 'Login';
-        if (isLoading) {
-          loginBtn.style.opacity = '0.7';
-        } else {
-          loginBtn.style.opacity = '1';
-        }
-      }
-
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        if (isProcessing) return; // Prevent multiple submissions
-        setLoading(true);
-
         try {
-          // Sign in with Firebase
-          const userCredential = await signInWithEmailAndPassword(
-            auth,
-            emailInput.value.trim(),
-            passwordInput.value
-          );
+          const email = emailInput.value.trim();
+          const password = passwordInput.value;
+          const role = roleSelect.value;
 
+          if (!email || !password || !role) {
+            showStatus('Please fill in all fields', true);
+            return;
+          }
+
+          // Sign in with Firebase Authentication
+          const userCredential = await window.signInWithEmailAndPassword(window.auth, email, password);
           const user = userCredential.user;
+          console.log("Login form submit: User successfully authenticated. UID:", user.uid);
 
-          // Get user role from Firestore
-          const usersRef = collection(db, "users");
-          const q = query(usersRef, where("email", "==", emailInput.value.trim()));
-          const querySnapshot = await getDocs(q);
+          // Get user data from Firestore
+          const userDoc = await window.getDoc(window.doc(window.db, "users", user.uid));
           
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            
-            // Verify role matches
-            if (userData.role !== roleSelect.value) {
-              showStatus('Invalid role selected', true);
-              setLoading(false);
-              return;
-            }
+          if (!userDoc.exists()) {
+            console.error("Login: User document does not exist in Firestore for UID:", user.uid);
+            showStatus('User profile not found. Please ensure you have signed up correctly and your Firestore rules allow data access.', true);
+            return;
+          }
 
-            // Store user info in session storage
-            const sessionData = {
-              uid: user.uid,
-              email: user.email,
-              role: userData.role,
-              fullName: userData.fullName,
-              lastLogin: new Date().toISOString()
-            };
-            
-            sessionStorage.setItem('user', JSON.stringify(sessionData));
-            localStorage.setItem('userLoggedIn', 'true');
+          const userData = userDoc.data();
 
-            // Save credentials if remember me is checked
-            if (rememberMeCheckbox.checked) {
-              localStorage.setItem('savedUser', JSON.stringify({
-                email: user.email,
-                role: userData.role
-              }));
-            } else {
-              localStorage.removeItem('savedUser');
-            }
+          if (!userData) {
+            // This case should theoretically not happen if userDoc.exists() is true, but as a fallback
+            showStatus('User data not found or empty. Please contact support.', true);
+            return;
+          }
 
-            showStatus('Login successful! Redirecting...', false);
+          // Verify role matches
+          if (userData.role !== role) {
+            showStatus('Invalid role selected', true);
+            return;
+          }
 
-            // Check for redirect URL from session storage
-            const redirectUrl = sessionStorage.getItem('redirectUrl');
-            sessionStorage.removeItem('redirectUrl');
+          // Store user info in localStorage
+          const userInfo = {
+            uid: user.uid,
+            fullName: userData.fullName,
+            email: userData.email,
+            role: userData.role,
+            lastLogin: new Date().toISOString()
+          };
+          
+          localStorage.setItem('user', JSON.stringify(userInfo));
+          localStorage.setItem('userLoggedIn', 'true');
 
-            // Redirect based on role after a short delay
-            setTimeout(() => {
-              if (redirectUrl) {
-                window.location.href = redirectUrl;
-              } else {
-                window.location.href = userData.role === 'mentor' ? 'mentor.html' :
-                                     userData.role === 'investor' ? 'funds.html' : 
-                                     'index.html';
-              }
-            }, 2000); // Increased delay to 2 seconds
-
+          // Save credentials if remember me is checked
+          if (rememberMeCheckbox.checked) {
+            localStorage.setItem('savedUser', JSON.stringify(userInfo));
           } else {
-            showStatus('User data not found', true);
-            setLoading(false);
+            localStorage.removeItem('savedUser');
           }
 
-        } catch (error) {
-          console.error('Login error:', error);
-          let errorMessage = 'An error occurred during login.';
-          
-          // Handle specific Firebase errors
-          switch (error.code) {
-            case 'auth/user-not-found':
-            case 'auth/wrong-password':
-              errorMessage = 'Invalid email or password';
-              break;
-            case 'auth/invalid-email':
-              errorMessage = 'Invalid email address';
-              break;
-            case 'auth/user-disabled':
-              errorMessage = 'This account has been disabled';
-              break;
-            case 'auth/too-many-requests':
-              errorMessage = 'Too many failed attempts. Please try again later';
-              break;
-          }
-          
-          showStatus(errorMessage, true);
-          setLoading(false);
-        }
-      });
+          showStatus('Login successful! Redirecting...', false);
 
-      // Modified auth state change listener
-      let isFirstLoad = true;
-      onAuthStateChanged(auth, async (user) => {
-        if (user && !isFirstLoad) { // Only redirect if not first load
-          try {
-            // Get user role from Firestore
-            const usersRef = collection(db, "users");
-            const q = query(usersRef, where("email", "==", user.email));
-            const querySnapshot = await getDocs(q);
-            
-            if (!querySnapshot.empty) {
-              const userData = querySnapshot.docs[0].data();
-              
-              // Redirect based on role
+          // Check for redirect URL from session storage
+          const redirectUrl = sessionStorage.getItem('redirectUrl');
+          sessionStorage.removeItem('redirectUrl');
+
+          // Redirect based on role after a short delay
+          setTimeout(() => {
+            if (redirectUrl) {
+              window.location.href = redirectUrl;
+            } else {
               window.location.href = userData.role === 'mentor' ? 'mentor.html' :
                                    userData.role === 'investor' ? 'funds.html' : 
                                    'index.html';
             }
-          } catch (error) {
-            console.error('Error checking user role:', error);
+          }, 1500);
+
+        } catch (error) {
+          console.error('Login error:', error);
+          if (error.code === 'auth/user-not-found') {
+            showStatus('No account found with this email', true);
+          } else if (error.code === 'auth/wrong-password') {
+            showStatus('Invalid password', true);
+          } else if (error.code === 'auth/invalid-email') {
+            showStatus('Invalid email format', true);
+          } else if (error.code === 'auth/invalid-credential') {
+            showStatus('Invalid email or password', true);
+          } else {
+            showStatus('An error occurred during login. Please try again.', true);
           }
         }
-        isFirstLoad = false;
       });
     });
   </script>

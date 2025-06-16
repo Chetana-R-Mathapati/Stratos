@@ -306,6 +306,13 @@
 
           const user = userCredential.user;
 
+          // Removed email verification check
+          // if (!user.emailVerified) {
+          //   showStatus('Please verify your email before logging in', true);
+          //   setLoading(false);
+          //   return;
+          // }
+
           // Get user role from Firestore
           const usersRef = collection(db, "users");
           const q = query(usersRef, where("email", "==", emailInput.value.trim()));
@@ -331,7 +338,6 @@
             };
             
             sessionStorage.setItem('user', JSON.stringify(sessionData));
-            localStorage.setItem('userLoggedIn', 'true');
 
             // Save credentials if remember me is checked
             if (rememberMeCheckbox.checked) {

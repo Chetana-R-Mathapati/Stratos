@@ -647,204 +647,540 @@
         });
 
         // Chart.js for Startup Funding Trends
-        const ctx = document.getElementById('fundingChart').getContext('2d');
-        const fundingChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
-                datasets: [{
-                    label: 'Funding (in Millions)',
-                    data: [150, 200, 250, 400, 350, 450],
-                    backgroundColor: 'rgba(95, 99, 242, 0.2)',   // Soft fill (Indigo)
-                    borderColor: '#5F63F2',                     // Bold line (Indigo)
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#F4B400',            // Highlight points (Yellow)
-                    pointBorderColor: '#1C2D4A',                // Dark border for points
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: 'black'
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Startup Funding Over the Years',
-                        color: 'black',
-                        font: {
-                            size: 18,
-                            weight: 'bold'
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: 'black'
-                        },
-                        grid: {
-                            color: '#2F3A4B'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: 'black'
-                        },
-                        grid: {
-                            color: '#2F3A4B'
-                        }
-                    }
-                }
+     // Chart.js for Startup Funding Trends
+ const ctx = document.getElementById('fundingChart').getContext('2d');
+   const fundingChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+    datasets: [{
+      label: 'Funding (in Millions)',
+      data: [150, 200, 250, 400, 350, 450],
+      backgroundColor: 'rgba(95, 99, 242, 0.2)',   // Soft fill (Indigo)
+      borderColor: '#5F63F2',                     // Bold line (Indigo)
+      borderWidth: 3,
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: '#F4B400',            // Highlight points (Yellow)
+      pointBorderColor: '#1C2D4A',                // Dark border for points
+      pointRadius: 5,
+      pointHoverRadius: 7
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: 'black'
+        }
+      },
+      title: {
+        display: true,
+        text: 'Startup Funding Over the Years',
+        color: 'black',
+        font: {
+          size: 18,
+          weight: 'bold'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: 'black'
+        },
+        grid: {
+          color: '#2F3A4B'
+        }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: 'black'
+        },
+        grid: {
+          color: '#2F3A4B'
+        }
+      }
+    }
+  }
+});
+
+    const impactCtx = document.getElementById('impactChart').getContext('2d');
+  const impactChart = new Chart(impactCtx, {
+  type: 'bar',
+  data: {
+    labels: ['2020', '2021', '2022', '2023', '2024'],
+    datasets: [{
+      label: 'Impact Score',
+      data: [50, 100, 150, 300, 450],
+      backgroundColor: [
+        '#FF6B57',  // Coral Red for 2020
+        '#1C2D4A',  // Dark Navy for 2021
+        '#F4B400',  // Gold/Yellow for 2022
+        '#3CB8B4',  // Teal for 2023
+        '#5F63F2'   // Indigo for 2024
+      ],
+      borderColor: [
+        '#CC5546',  // darker coral
+        '#0E1A30',  // darker navy
+        '#C29A00',  // darker yellow
+        '#2A8887',  // darker teal
+        '#4649C5'   // darker indigo
+      ],
+      borderWidth: 1.5
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#FFFFFF' // white legend text for dark backgrounds
+        }
+      },
+      title: {
+        display: true,
+        text: 'Startup Ecosystem Impact (2020–2024)',
+        color: '#FFFFFF',
+        font: {
+          size: 18,
+          weight: 'bold'
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: '#FFFFFF' // white axis labels
+        },
+        grid: {
+          color: '#374151' // subtle grid lines
+        }
+      },
+      x: {
+        ticks: {
+          color: '#FFFFFF'
+        },
+        grid: {
+          color: '#374151'
+        }
+      }
+    }
+  }
+});
+
+
+        // Dummy Login/Logout Logic
+     // Dummy Login/Logout Logic
+function updateAuthSection() {
+    const authSection = document.getElementById('authSection');
+    const isLoggedIn = localStorage.getItem('isLoggedIn'); // Example using localStorage
+
+    if (isLoggedIn === 'true') {
+        authSection.innerHTML = `
+            <span class="text-white mr-3">Welcome, User!</span>
+            <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+        `;
+        document.getElementById('taxServicesContainer').style.display = 'block'; // Show Tax Services
+    } else {
+        authSection.innerHTML = `
+            <a href="#" class="btn btn-outline-light mr-2">Log In</a>
+            <a href="#" class="btn btn-primary">Sign In &rarr;</a>
+        `;
+        document.getElementById('taxServicesContainer').style.display = 'none'; // Hide Tax Services
+    }
+}
+
+function login() {
+    localStorage.setItem('isLoggedIn', 'true');
+    updateAuthSection();
+    alert('Logged In!');
+}
+
+function logout() {
+    localStorage.removeItem('isLoggedIn');
+    updateAuthSection();
+    alert('Logged Out!');
+}
+
+// Initial call to set the auth section state
+updateAuthSection();
+
+// Attach login/signup functionalities to dummy buttons (if they exist)
+document.addEventListener('DOMContentLoaded', () => {
+    const loginBtn = document.querySelector('#authSection .btn-outline-light');
+    const signInBtn = document.querySelector('#authSection .btn-primary');
+
+    if (loginBtn) {
+        loginBtn.addEventListener('click', login);
+    }
+    // For Sign In, you might redirect or open a modal
+    if (signInBtn) {
+        signInBtn.addEventListener('click', () => {
+            alert('Redirecting to Sign In page or showing Sign Up form!');
+            // For demonstration, let's also log in
+            login();
+        });
+    }
+});
+    </script>
+    <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const loginLink = document.getElementById('loginLink');
+    const signupLink = document.getElementById('signupLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const taxServicesContainer = document.getElementById('taxServicesContainer'); // Already existing
+
+    // Get references to the new navigation items by their IDs
+    const ideaIncubationNavItem = document.getElementById('ideaIncubationNavItem');
+    const mentorConnectNavItem = document.getElementById('mentorConnectNavItem');
+    const investorHubNavItem = document.getElementById('investorHubNavItem');
+    const collabNavItem = document.getElementById('collabNavItem');
+    const industryInsightsNavItem = document.getElementById('industryInsightsNavItem');
+    const promoZoneNavItem = document.getElementById('promoZoneNavItem');
+
+
+    function updateAuthButtons() {
+        const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+
+        // --- Authentication Buttons (Login/Signup vs. Logout) ---
+        if (isLoggedIn) {
+            if (loginLink) loginLink.style.display = 'none';
+            if (signupLink) signupLink.style.display = 'none';
+            if (logoutBtn) logoutBtn.style.display = 'block';
+        } else {
+            if (loginLink) loginLink.style.display = 'block';
+            if (signupLink) signupLink.style.display = 'block';
+            if (logoutBtn) logoutBtn.style.display = 'none';
+        }
+
+        // --- Navigation Items Visibility ---
+        if (isLoggedIn) {
+            // Show protected nav items
+            if (ideaIncubationNavItem) ideaIncubationNavItem.style.display = 'block';
+            if (mentorConnectNavItem) mentorConnectNavItem.style.display = 'block';
+            if (investorHubNavItem) investorHubNavItem.style.display = 'block';
+            if (collabNavItem) collabNavItem.style.display = 'block';
+            if (industryInsightsNavItem) industryInsightsNavItem.style.display = 'block';
+            if (promoZoneNavItem) promoZoneNavItem.style.display = 'block';
+            if (taxServicesContainer) taxServicesContainer.style.display = 'block'; // Already handled, keep for consistency
+        } else {
+            // Hide protected nav items
+            if (ideaIncubationNavItem) ideaIncubationNavItem.style.display = 'none';
+            if (mentorConnectNavItem) mentorConnectNavItem.style.display = 'none';
+            if (investorHubNavItem) investorHubNavItem.style.display = 'none';
+            if (collabNavItem) collabNavItem.style.display = 'none';
+            if (industryInsightsNavItem) industryInsightsNavItem.style.display = 'none';
+            if (promoZoneNavItem) promoZoneNavItem.style.display = 'none';
+            if (taxServicesContainer) taxServicesContainer.style.display = 'none'; // Already handled, keep for consistency
+        }
+    }
+
+    // Add event listener for the logout button
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('user');
+            localStorage.removeItem('savedUser');
+
+            updateAuthButtons(); // Update UI immediately after logout
+            window.location.href = 'login.html'; // Redirect to login page
+        });
+    }
+
+    // Initial call to set the correct state of the buttons and nav items on page load
+    updateAuthButtons();
+
+    // Listen for changes in local storage from other tabs/windows (optional but good practice)
+    window.addEventListener('storage', updateAuthButtons);
+});
+    const isLoggedIn = localStorage.getItem("userLoggedIn") === "true";
+    const loginLink = document.getElementById("loginLink");
+    const signupLink = document.getElementById("signupLink");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (isLoggedIn) {
+      loginLink.style.display = "none";
+      signupLink.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    } else {
+      loginLink.style.display = "inline-block";
+      signupLink.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+    }
+
+    logoutBtn.addEventListener("click", async function () {
+      try {
+        const response = await fetch("http://localhost:3000/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include"
+        });
+        const data = await response.json();
+        if (data.success) {
+          localStorage.removeItem("userLoggedIn");
+          localStorage.removeItem("currentUser");
+          window.location.href = "login.html";
+        }
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    });
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        function updateAuthButtons() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true'; // Check your local storage flag
+            // Or use Firebase: const user = firebase.auth().currentUser;
+            // const isLoggedIn = !!user;
+
+            if (isLoggedIn) {
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+            } else {
+                loginBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                logoutBtn.style.display = 'none';
             }
+        }
+
+        logoutBtn.addEventListener('click', function() {
+            // Clear local storage
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('user');
+            localStorage.removeItem('savedUser'); // Also remove saved credentials
+
+            // If using Firebase:
+            // firebase.auth().signOut().then(() => {
+            //     console.log('User signed out from Firebase');
+            // }).catch((error) => {
+            //     console.error('Error signing out:', error);
+            // });
+
+            // Update buttons immediately
+            updateAuthButtons();
+            // Redirect to login page or home
+            window.location.href = 'login.html'; 
         });
 
-        // --- Combined Authentication and Navigation Logic ---
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOMContentLoaded event fired for index.html");
+        // Call on page load
+        updateAuthButtons();
 
+        // Listen for changes in local storage (optional, for cross-tab sync)
+        window.addEventListener('storage', updateAuthButtons);
+    });
+</script>
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
             const loginLink = document.getElementById('loginLink');
             const signupLink = document.getElementById('signupLink');
             const logoutBtn = document.getElementById('logoutBtn');
-
-            // Get references to all navigation items
-            const homeNavItem = document.getElementById('homeNavItem');
-            const ideaIncubationNavItem = document.getElementById('ideaIncubationNavItem');
-            const mentorConnectNavItem = document.getElementById('mentorConnectNavItem');
-            const investorHubNavItem = document.getElementById('investorHubNavItem');
-            const collabNavItem = document.getElementById('collabNavItem');
-            const industryInsightsNavItem = document.getElementById('industryInsightsNavItem');
-            const promoZoneNavItem = document.getElementById('promoZoneNavItem');
             const taxServicesContainer = document.getElementById('taxServicesContainer');
 
-            // Collect all navigation items into an array to easily control their visibility/accessibility
-            const allNavItemsToControl = [
-                ideaIncubationNavItem, mentorConnectNavItem,
-                investorHubNavItem, collabNavItem, industryInsightsNavItem,
-                promoZoneNavItem, taxServicesContainer
-            ].filter(item => item !== null); // Filter out any items that might not exist in the HTML
+            function updateAuthButtons() {
+                // Use the 'userLoggedIn' flag set by your login page
+                const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+                // You can also check for user object if you store it:
+                // const user = JSON.parse(localStorage.getItem('user'));
+                // const isLoggedIn = user !== null;
 
-
-            function updateAuthAndNavigationUI() {
-                console.log("updateAuthAndNavigationUI called.");
-                let isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-                let currentUserRole = null;
-
-                // Attempt to retrieve user object from sessionStorage if logged in
                 if (isLoggedIn) {
-                    const userString = sessionStorage.getItem('user');
-                    console.log("User string from sessionStorage:", userString);
-                    if (userString) {
-                        try {
-                            const user = JSON.parse(userString);
-                            currentUserRole = user.role;
-                            console.log("Parsed user role:", currentUserRole);
-                        } catch (e) {
-                            console.error("Error parsing user data from sessionStorage:", e);
-                            // If user data is corrupted, force logged out state
-                            localStorage.removeItem('userLoggedIn');
-                            sessionStorage.removeItem('user'); // Clear session storage as well
-                            isLoggedIn = false;
-                        }
-                    }
+                    if (loginLink) loginLink.style.display = 'none';
+                    if (signupLink) signupLink.style.display = 'none';
+                    if (logoutBtn) logoutBtn.style.display = 'block';
+                    if (taxServicesContainer) taxServicesContainer.style.display = 'block'; // Show Tax Services
+                } else {
+                    if (loginLink) loginLink.style.display = 'block';
+                    if (signupLink) signupLink.style.display = 'block';
+                    if (logoutBtn) logoutBtn.style.display = 'none';
+                    if (taxServicesContainer) taxServicesContainer.style.display = 'none'; // Hide Tax Services
                 }
-                console.log("Current login state: isLoggedIn=", isLoggedIn, "currentUserRole=", currentUserRole);
-
-                // --- Authentication Buttons (Login/Signup vs. Logout) ---
-                if (loginLink) loginLink.style.display = isLoggedIn ? 'none' : 'block';
-                if (signupLink) signupLink.style.display = isLoggedIn ? 'none' : 'block';
-                if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
-                console.log("Auth buttons updated.");
-
-                // --- Navigation Items Visibility (Locked/Unlocked) based on Role ---
-
-                // Step 1: Default state - all controllable nav items are 'locked' (inaccessible/faded)
-                allNavItemsToControl.forEach(item => {
-                    if (item) {
-                        item.classList.add('locked-nav-item');
-                        console.log("Locked:", item.id);
-                    }
-                });
-
-                // Ensure Home is unlocked if logged in, otherwise it will also be locked
-                if (homeNavItem) {
-                    if (isLoggedIn) {
-                        homeNavItem.classList.remove('locked-nav-item');
-                        console.log("Unlocked: homeNavItem");
-                    } else {
-                        homeNavItem.classList.add('locked-nav-item'); // Lock Home if not logged in
-                        console.log("Locked: homeNavItem (not logged in)");
-                    }
-                }
-
-                // Step 2: Unlock specific items based on login status and role
-                if (isLoggedIn) {
-                    switch (currentUserRole) {
-                        case 'user':
-                            // 'user' role: Unlock ALL nav items
-                            allNavItemsToControl.forEach(item => {
-                                if (item) {
-                                    item.classList.remove('locked-nav-item');
-                                    console.log("Unlocked (user role):", item.id);
-                                }
-                            });
-                            break;
-                        case 'mentor':
-                            // Mentor role: Only Mentor Connect and Home are unlocked
-                            if (mentorConnectNavItem) {
-                                mentorConnectNavItem.classList.remove('locked-nav-item');
-                                console.log("Unlocked (mentor role): mentorConnectNavItem");
-                            }
-                            break;
-                        case 'investor':
-                            // Investor role: Only Investor Hub and Home are unlocked
-                            if (investorHubNavItem) {
-                                investorHubNavItem.classList.remove('locked-nav-item');
-                                console.log("Unlocked (investor role): investorHubNavItem");
-                            }
-                            break;
-                        default:
-                            // For unhandled/unknown roles, only Home is unlocked, others remain locked.
-                            console.warn("Unhandled user role:", currentUserRole);
-                            break;
-                    }
-                }
-                console.log("Navigation items updated based on role.");
             }
 
             // Add event listener for the logout button
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log("Logout button clicked.");
+                    e.preventDefault(); // Prevent default button behavior
 
-                    // Clear all relevant storage items related to user session
+                    // Clear local storage items related to user session
                     localStorage.removeItem('userLoggedIn');
-                    sessionStorage.removeItem('user');
-                    localStorage.removeItem('savedUser'); // For "Remember Me"
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('savedUser'); // Remove remembered credentials
 
-                    // Update the UI buttons and navigation immediately after logout
-                    updateAuthAndNavigationUI();
+                    // If you have a backend logout endpoint (like your commented code suggested)
+                    // You might want to make a fetch request here:
+                    /*
+                    try {
+                        const response = await fetch("http://localhost:3000/logout", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            credentials: "include" // Important for sending cookies/session info
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            console.log("Logged out from backend.");
+                        } else {
+                            console.warn("Backend logout not successful:", data.message);
+                        }m
+                    } catch (error) {
+                        console.error("Error during backend logout:", error);
+                    }
+                    */
+
+                    // Update the UI buttons
+                    updateAuthButtons();
 
                     // Redirect to the login page
                     window.location.href = 'login.html';
                 });
             }
 
-            // Initial call to set the correct state of the UI when the page loads
-            updateAuthAndNavigationUI();
+            // Initial call to set the correct state of the buttons when the page loads
+            updateAuthButtons();
 
-            // Listen for changes in local storage from other tabs/windows (optional but good practice for multi-tab sessions)
-            window.addEventListener('storage', updateAuthAndNavigationUI);
+            // Listen for changes in local storage from other tabs/windows (optional but good practice)
+            window.addEventListener('storage', updateAuthButtons);
         });
     </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginLink = document.getElementById('loginLink');
+        const signupLink = document.getElementById('signupLink');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Get references to all navigation items
+        const homeNavItem = document.getElementById('homeNavItem');
+        const ideaIncubationNavItem = document.getElementById('ideaIncubationNavItem');
+        const mentorConnectNavItem = document.getElementById('mentorConnectNavItem');
+        const investorHubNavItem = document.getElementById('investorHubNavItem');
+        const collabNavItem = document.getElementById('collabNavItem');
+        const industryInsightsNavItem = document.getElementById('industryInsightsNavItem');
+        const promoZoneNavItem = document.getElementById('promoZoneNavItem');
+        const taxServicesContainer = document.getElementById('taxServicesContainer');
+
+        // Collect all navigation items into an array to easily lock them all initially
+        // Note: homeNavItem is excluded here as its unlock logic is slightly different (always unlocked if logged in)
+        const allNavItemsToControl = [
+            ideaIncubationNavItem, mentorConnectNavItem,
+            investorHubNavItem, collabNavItem, industryInsightsNavItem,
+            promoZoneNavItem, taxServicesContainer
+        ].filter(item => item !== null); // Filter out any items that might not exist
+
+
+        function updateAuthButtons() {
+            let isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            let currentUserRole = null;
+
+            // Try to get the user object from local storage if logged in
+            if (isLoggedIn) {
+                const userString = localStorage.getItem('user');
+                if (userString) {
+                    try {
+                        const user = JSON.parse(userString);
+                        currentUserRole = user.role;
+                    } catch (e) {
+                        console.error("Error parsing user data from localStorage:", e);
+                        // If user data is corrupted, force logged out state
+                        localStorage.removeItem('userLoggedIn');
+                        localStorage.removeItem('user');
+                        isLoggedIn = false;
+                    }
+                }
+            }
+
+            // --- Authentication Buttons (Login/Signup vs. Logout) ---
+            if (isLoggedIn) {
+                if (loginLink) loginLink.style.display = 'none';
+                if (signupLink) signupLink.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'block';
+            } else {
+                if (loginLink) loginLink.style.display = 'block';
+                if (signupLink) signupLink.style.display = 'block';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+            }
+
+            // --- Navigation Items Visibility (Locked/Unlocked) based on Role ---
+
+            // Step 1: Default state - all controllable nav items are 'locked' initially
+            allNavItemsToControl.forEach(item => {
+                if (item) item.classList.add('locked-nav-item');
+            });
+
+            // Ensure Home is unlocked if logged in, locked otherwise
+            if (homeNavItem) {
+                if (isLoggedIn) {
+                    homeNavItem.classList.remove('locked-nav-item');
+                } else {
+                    homeNavItem.classList.add('locked-nav-item'); // Lock Home if not logged in
+                }
+            }
+
+
+            // Step 2: Unlock specific items based on login status and role
+            if (isLoggedIn) {
+                switch (currentUserRole) {
+                    case 'user':
+                        // 'user' role: Unlock ALL nav items
+                        allNavItemsToControl.forEach(item => {
+                            if (item) item.classList.remove('locked-nav-item');
+                        });
+                        break;
+                    case 'mentor':
+                        // Mentor role: Only Mentor Connect is unlocked (Home already handled)
+                        if (mentorConnectNavItem) mentorConnectNavItem.classList.remove('locked-nav-item');
+                        // All other items in allNavItemsToControl remain locked
+                        break;
+                    case 'investor':
+                        // Investor role: Only Investor Hub is unlocked (Home already handled)
+                        if (investorHubNavItem) investorHubNavItem.classList.remove('locked-nav-item');
+                        // All other items in allNavItemsToControl remain locked
+                        break;
+                    default:
+                        // For unhandled/unknown roles, only Home is unlocked, others remain locked.
+                        break;
+                }
+            } else {
+                // If NOT logged in, all items remain in their default 'locked' state (set at the beginning).
+            }
+        }
+
+        // Add event listener for the logout button
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('user');
+                localStorage.removeItem('savedUser');
+
+                updateAuthButtons(); // Update UI immediately after logout
+                window.location.href = 'login.html'; // Redirect to login page
+            });
+        }
+
+        // Initial call to set the correct state of the buttons and nav items on page load
+        updateAuthButtons();
+
+        // Listen for changes in local storage from other tabs/windows (optional but good practice)
+        window.addEventListener('storage', updateAuthButtons);
+    });
+</script>
 </body>
 </html>

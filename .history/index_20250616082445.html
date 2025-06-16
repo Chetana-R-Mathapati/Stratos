@@ -709,8 +709,6 @@
 
         // --- Combined Authentication and Navigation Logic ---
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOMContentLoaded event fired for index.html");
-
             const loginLink = document.getElementById('loginLink');
             const signupLink = document.getElementById('signupLink');
             const logoutBtn = document.getElementById('logoutBtn');
@@ -734,19 +732,16 @@
 
 
             function updateAuthAndNavigationUI() {
-                console.log("updateAuthAndNavigationUI called.");
                 let isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
                 let currentUserRole = null;
 
                 // Attempt to retrieve user object from sessionStorage if logged in
                 if (isLoggedIn) {
                     const userString = sessionStorage.getItem('user');
-                    console.log("User string from sessionStorage:", userString);
                     if (userString) {
                         try {
                             const user = JSON.parse(userString);
                             currentUserRole = user.role;
-                            console.log("Parsed user role:", currentUserRole);
                         } catch (e) {
                             console.error("Error parsing user data from sessionStorage:", e);
                             // If user data is corrupted, force logged out state
@@ -756,32 +751,25 @@
                         }
                     }
                 }
-                console.log("Current login state: isLoggedIn=", isLoggedIn, "currentUserRole=", currentUserRole);
 
                 // --- Authentication Buttons (Login/Signup vs. Logout) ---
                 if (loginLink) loginLink.style.display = isLoggedIn ? 'none' : 'block';
                 if (signupLink) signupLink.style.display = isLoggedIn ? 'none' : 'block';
                 if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
-                console.log("Auth buttons updated.");
 
                 // --- Navigation Items Visibility (Locked/Unlocked) based on Role ---
 
                 // Step 1: Default state - all controllable nav items are 'locked' (inaccessible/faded)
                 allNavItemsToControl.forEach(item => {
-                    if (item) {
-                        item.classList.add('locked-nav-item');
-                        console.log("Locked:", item.id);
-                    }
+                    if (item) item.classList.add('locked-nav-item');
                 });
 
                 // Ensure Home is unlocked if logged in, otherwise it will also be locked
                 if (homeNavItem) {
                     if (isLoggedIn) {
                         homeNavItem.classList.remove('locked-nav-item');
-                        console.log("Unlocked: homeNavItem");
                     } else {
                         homeNavItem.classList.add('locked-nav-item'); // Lock Home if not logged in
-                        console.log("Locked: homeNavItem (not logged in)");
                     }
                 }
 
@@ -791,25 +779,16 @@
                         case 'user':
                             // 'user' role: Unlock ALL nav items
                             allNavItemsToControl.forEach(item => {
-                                if (item) {
-                                    item.classList.remove('locked-nav-item');
-                                    console.log("Unlocked (user role):", item.id);
-                                }
+                                if (item) item.classList.remove('locked-nav-item');
                             });
                             break;
                         case 'mentor':
                             // Mentor role: Only Mentor Connect and Home are unlocked
-                            if (mentorConnectNavItem) {
-                                mentorConnectNavItem.classList.remove('locked-nav-item');
-                                console.log("Unlocked (mentor role): mentorConnectNavItem");
-                            }
+                            if (mentorConnectNavItem) mentorConnectNavItem.classList.remove('locked-nav-item');
                             break;
                         case 'investor':
                             // Investor role: Only Investor Hub and Home are unlocked
-                            if (investorHubNavItem) {
-                                investorHubNavItem.classList.remove('locked-nav-item');
-                                console.log("Unlocked (investor role): investorHubNavItem");
-                            }
+                            if (investorHubNavItem) investorHubNavItem.classList.remove('locked-nav-item');
                             break;
                         default:
                             // For unhandled/unknown roles, only Home is unlocked, others remain locked.
@@ -817,14 +796,12 @@
                             break;
                     }
                 }
-                console.log("Navigation items updated based on role.");
             }
 
             // Add event listener for the logout button
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log("Logout button clicked.");
 
                     // Clear all relevant storage items related to user session
                     localStorage.removeItem('userLoggedIn');
