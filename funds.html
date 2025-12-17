@@ -442,6 +442,11 @@
       try {
           await addDoc(collection(db, "investors"), investorData);
           showToast("Investor profile added successfully!");
+         localStorage.setItem("taxUnlocked", "true");
+         modal.style.display = 'none';
+         document.getElementById('modalOverlay').style.display = 'block';
+         document.getElementById('successModal').style.display = 'block';
+         showToast("Appointment Booked Successfully!");
           displayAllInvestors();
       } catch (error) {
           console.error("Error adding investor:", error);
