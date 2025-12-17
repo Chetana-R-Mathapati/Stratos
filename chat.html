@@ -131,59 +131,59 @@
   </form>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
+  <script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io(); // connect to server
 
-    const params = new URLSearchParams(window.location.search);
-    const username = params.get("username");
-    const skill = params.get("skill");
+const params = new URLSearchParams(window.location.search);
+const username = params.get("username") || "Anonymous";
+const skill = params.get("skill") || "general";
 
-    document.getElementById("room-name").innerText = `Skill Room: ${skill.toUpperCase()}`;
+// Join room
+socket.emit("joinRoom", { username, room: skill });
 
-    socket.emit("joinRoom", { username, room: skill });
+// Send message
+document.getElementById("chat-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const msgInput = document.getElementById("msg");
+  const msg = msgInput.value;
 
-    // Live Streaming
- 
-    // Request time update periodically
-    setInterval(() => {
-      socket.emit('requestTimeUpdate', { room: skill });
-    }, 60000); // Request update every minute
+  if (!msg) return;
 
-    // Existing chat functionality
-    socket.on("message", (message) => {
-      appendMessage(message);
-    });
+  // Display message instantly
+  appendMessage(`Me: ${msg}`);
 
-    socket.on("chatMessage", ({ username, msg }) => {
-      appendMessage(`${username}: ${msg}`);
-    });
+  // Emit to server
+  socket.emit("chatMessage", msg);
 
-    socket.on("typing", (typingUser) => {
-      const typingDiv = document.getElementById("typing-indicator");
-      typingDiv.innerText = `${typingUser} is typing...`;
-      clearTimeout(typingDiv._timeout);
-      typingDiv._timeout = setTimeout(() => typingDiv.innerText = '', 2000);
-    });
+  msgInput.value = "";
+});
 
-    document.getElementById("chat-form").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const msgInput = document.getElementById("msg");
-      const msg = msgInput.value;
-      socket.emit("chatMessage", msg);
-      msgInput.value = "";
-    });
+// Receive messages
+socket.on("chatMessage", ({ username: sender, msg }) => {
+  // Skip displaying the sender’s own message twice
+  if (sender !== "Me") appendMessage(`${sender}: ${msg}`);
+});
 
-    document.getElementById("msg").addEventListener("input", () => {
-      socket.emit("typing");
-    });
+// Typing indicator
+document.getElementById("msg").addEventListener("input", () => {
+  socket.emit("typing");
+});
 
-    function appendMessage(text) {
-      const div = document.createElement("div");
-      div.innerText = text;
-      document.getElementById("chat-box").appendChild(div);
-      document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
-    }
-  </script>
+socket.on("typing", (typingUser) => {
+  const typingDiv = document.getElementById("typing-indicator");
+  typingDiv.innerText = `${typingUser} is typing...`;
+  clearTimeout(typingDiv._timeout);
+  typingDiv._timeout = setTimeout(() => typingDiv.innerText = "", 2000);
+});
+
+function appendMessage(text) {
+  const div = document.createElement("div");
+  div.innerText = text;
+  document.getElementById("chat-box").appendChild(div);
+  document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
+}
+</script>
 
 </body>
 </html>
