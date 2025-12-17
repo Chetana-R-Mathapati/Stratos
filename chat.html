@@ -121,12 +121,6 @@
 </head>
 <body>
 
-  <div id="room-title">
-    <span id="room-name"></span>
-    <div class="live-indicator">
-      LIVE
-    </div>
-  </div>
 
 
   <div id="chat-box"></div>
@@ -149,88 +143,7 @@
     socket.emit("joinRoom", { username, room: skill });
 
     // Live Streaming
-    let isLive = false;
-    let stream = null;
-    const startLiveBtn = document.getElementById('startLive');
-    const shareScreenBtn = document.getElementById('shareScreen');
-    const videoContainer = document.getElementById('video-container');
-    const localVideo = document.getElementById('localVideo');
-    const liveIndicator = document.querySelector('.live-indicator');
-
-    startLiveBtn.addEventListener('click', async () => {
-      if (!isLive) {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-          localVideo.srcObject = stream;
-          videoContainer.style.display = 'block';
-          startLiveBtn.textContent = 'End Live Stream';
-          startLiveBtn.classList.add('live');
-          shareScreenBtn.style.display = 'block';
-          liveIndicator.classList.add('active');
-          isLive = true;
-          
-          // Emit live start event
-          socket.emit('startLive', { username, room: skill });
-          
-          // Update last live time
-          const now = new Date();
-          document.getElementById('lastLiveTime').textContent = `Last live: ${now.toLocaleString()}`;
-        } catch (err) {
-          console.error('Error accessing media devices:', err);
-          alert('Could not access camera/microphone. Please check permissions.');
-        }
-      } else {
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-          localVideo.srcObject = null;
-        }
-        videoContainer.style.display = 'none';
-        startLiveBtn.textContent = 'Start Live Stream';
-        startLiveBtn.classList.remove('live');
-        shareScreenBtn.style.display = 'none';
-        liveIndicator.classList.remove('active');
-        isLive = false;
-        
-        // Emit live end event
-        socket.emit('endLive', { username, room: skill });
-      }
-    });
-
-    shareScreenBtn.addEventListener('click', async () => {
-      try {
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-        localVideo.srcObject = screenStream;
-        
-        screenStream.getVideoTracks()[0].addEventListener('ended', () => {
-          if (stream) {
-            localVideo.srcObject = stream;
-          }
-        });
-      } catch (err) {
-        console.error('Error sharing screen:', err);
-        alert('Could not share screen. Please try again.');
-      }
-    });
-
-    // Update viewer count
-    socket.on('viewerUpdate', (count) => {
-      document.getElementById('viewerCount').textContent = `${count} viewer${count !== 1 ? 's' : ''}`;
-    });
-
-    // Update last live time for new users
-    socket.on('lastLiveTime', ({ timestamp, timeAgo, streamer }) => {
-      if (timestamp) {
-        const lastLiveElement = document.getElementById('lastLiveTime');
-        lastLiveElement.innerHTML = `Last live: <span class="streamer-name">${streamer}</span> ${timeAgo}`;
-      }
-    });
-
-    // Handle time ago updates
-    socket.on('updateTimeAgo', ({ timestamp, timeAgo, streamer }) => {
-      const lastLiveElement = document.getElementById('lastLiveTime');
-      lastLiveElement.innerHTML = `Last live: <span class="streamer-name">${streamer}</span> ${timeAgo}`;
-    });
-
+ 
     // Request time update periodically
     setInterval(() => {
       socket.emit('requestTimeUpdate', { room: skill });
