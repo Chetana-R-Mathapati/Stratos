@@ -224,19 +224,7 @@
 
     <script>
         // Check if user has access
-        function checkAccess() {
-            if (!localStorage.getItem('userLoggedIn')) {
-                alert('Please log in to access Tax Services');
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            if (!localStorage.getItem('investorAppointment')) {
-                alert('Unauthorized access. Please book an appointment in the Investor Hub first.');
-                window.location.href = 'funds.html';
-                return;
-            }
-        }
+    
 
         function calculateTax() {
             const income = parseFloat(document.getElementById('income').value) || 0;
@@ -248,7 +236,21 @@
             let deductions = 0;
             let tax = 0;
 
-            if (regime === 'old') {
+            function checkAccess() {
+    if (!localStorage.getItem('userLoggedIn')) {
+        alert('Please log in to access Tax Services');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // ✅ check appointment unlock flag
+    if (localStorage.getItem('taxUnlocked') !== 'true') {
+        alert('Please book an investor appointment to unlock Tax Services.');
+        window.location.href = 'investor_fund.html';
+        return;
+    }
+}
+if (regime === 'old') {
                 // Calculate deductions for old regime
                 deductions = Math.min(investments, 150000) + Math.min(houseRent * 0.5, 100000);
                 taxableIncome -= deductions;
